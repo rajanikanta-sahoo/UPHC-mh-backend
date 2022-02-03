@@ -114,59 +114,6 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 		List<XForm> xforms = xFormRepository.findAllByIsCompleteFalse();
 		
 		for (XForm xform : xforms) {
-//		String baseUrl = xform.getOdkServerURL().concat("view/submissionList");
-//		String serverURL = xform.getOdkServerURL();
-//		String userName = xform.getUsername();
-//		String password = xform.getPassword();
-////		String submission_xml_url = xform.getOdkServerURL().concat(
-////				"view/downloadSubmission");
-//		String base_xml_download_url = xform.getOdkServerURL().concat(
-//				"formXml?formId=");
-//		// String xFormId = xform.getxFormId();
-//		// String rootElement = xform.getxFormId();
-//
-//		StringWriter id_list = new StringWriter();
-//		AggregateUtils.DocumentFetchResult result = null;
-//		XmlSerializer serializer = new KXmlSerializer();
-//
-////		String formRooTitle = "";
-//
-//		StringWriter base_xlsForm = getXML(xform.getxFormId(), serverURL,
-//				userName, password, base_xml_download_url);
-//
-//		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-//		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-//
-//		Document core_xml_doc = dBuilder.parse(new InputSource(
-//				new ByteArrayInputStream(base_xlsForm.toString().getBytes(
-//						"utf-8"))));
-//		if (core_xml_doc != null) {
-//			core_xml_doc.getDocumentElement().normalize();
-////			Element eElement = (Element) core_xml_doc.getElementsByTagName(
-////					"group").item(0);
-////			formRooTitle = eElement.getAttribute("ref").split("/")[1];
-//		}
-
-//		Map<String, String> params = new HashMap<String, String>();
-//		params.put("formId", xform.getxFormId());
-//		params.put("cursor", "");
-//		params.put("numEntries", "");
-//		String fullUrl = WebUtils.createLinkWithProperties(baseUrl, params);
-//
-//		ServerConnectionInfo serverInfo = new ServerConnectionInfo(serverURL,
-//				userName, password.toCharArray());
-//		DocumentDescription submissionDescription = new DocumentDescription(
-//				"Fetch of manifest failed. Detailed reason: ",
-//				"Fetch of manifest failed ", "form manifest",
-//				new TerminationFuture());
-//		result = AggregateUtils.getXmlDocument(fullUrl, serverInfo, false,
-//				submissionDescription, null);
-//		serializer.setOutput(id_list);
-//		result.doc.write(serializer);
-//
-//		Document doc_id_list = dBuilder
-//				.parse(new InputSource(new ByteArrayInputStream(id_list
-//						.toString().getBytes("utf-8"))));
 			String inputFilePath = "C:\\Users\\Lulu\\Documents\\sdrc\\dga-mh\\xform\\" + xform.getxFormId()+ ".xlsx";
 			FileInputStream fileInputStream = new FileInputStream(inputFilePath);
 			XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
@@ -283,7 +230,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 			}
 			xssfWorkbook.close();
 		}
-		return false;
+		return true;
 	}
 
 	/*
@@ -1203,7 +1150,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 	@Transactional
 	public boolean updateArea() throws Exception {
 
-		String inputFilePath = "C:\\Users\\Lulu\\Documents\\sdrc\\dga-mh\\demoArea.xlsx";
+		String inputFilePath = "C:\\Users\\Lulu\\Documents\\sdrc\\dga-mh\\DGA_Maharastra_Checklist\\areaTamplate.xlsx";
 		FileInputStream fileInputStream = new FileInputStream(inputFilePath);
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
 

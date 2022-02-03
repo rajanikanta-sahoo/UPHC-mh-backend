@@ -409,7 +409,7 @@ public class UserServiceImpl implements UserService {
 					user_Program_XForm_Mapping.setIsLive(true);
 					user_Program_XForm_Mapping.setProgram_XForm_Mapping(program_XForm_Mapping);
 					user_Program_XForm_Mapping.setCreatedDate(new Timestamp(new java.util.Date().getTime()));
-					user_Program_XForm_Mapping.setCreatedBy("Harsh");
+					user_Program_XForm_Mapping.setCreatedBy("Rajani");
 
 					user_Program_XForm_MappingRepository.save(user_Program_XForm_Mapping);
 				}
@@ -529,11 +529,12 @@ public class UserServiceImpl implements UserService {
 			areaLevelIds.add(4);
 			
 			int parentAreaId = 2;
-			String areaCode = "IND010";
+			String areaCode = "IND027";
 			Map<Integer,Area> areaMap = new HashMap<>();
-
+			//for admin
 //			List<Area> areas = areaRepositroy.findByAreaLevelAreaLevelIdIn(areaLevelIds);
 //			List<Area> areas = areaRepositroy.findByParentAreaIdAndAreaLevelAreaLevelIdIn(parentAreaId,areaLevelIds);
+			//for other
 			List<Area> areas = areaRepositroy.findByIsLiveIsTrueAndAreaCodeContainingAndAreaLevelAreaLevelIdIn(areaCode,areaLevelIds);
 //			List<Area> areas = areaRepositroy.findByAreaIdIn(Arrays.asList(1));
 			areas.forEach(d->{

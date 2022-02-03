@@ -5,21 +5,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.sdrc</groupId>
-	<artifactId>dga</artifactId>
+	<artifactId>dga-uphc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging> 
 
-	<name>DGAIndia</name>
-	<description>DGA National Boot app</description>
+	<name>UPHC-MH</name>
+	<description>UPHC MH Boot app</description>
 
 
 	<developers>
-		<developer>
-			<name>Harsh Pratyush</name>
-			<email>harsh@sdrc.co.in</email>
-			<organization>SDRC Bhubaneswar</organization>
-			<organizationUrl>https://sdrc.co.in</organizationUrl>
-		</developer>
+		
 		<developer>
 			<name>Rajani kanta Sahoo</name>
 			<email>rajanikanta@sdrc.co.in</email>

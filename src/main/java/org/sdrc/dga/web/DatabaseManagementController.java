@@ -68,7 +68,7 @@ public class DatabaseManagementController {
 //	
 //	
 //	
-//	http://localhost:8080/dgaindia/database/generateXpath
+//	http://localhost:8080/uphc-mh/database/generateXpath
 	@GetMapping("generateXpath")
 	@ResponseBody
 	boolean generateXpath() throws Exception {
@@ -144,6 +144,7 @@ public class DatabaseManagementController {
 			return false;
 	}
 
+	//http://localhost:8080/uphc-mh/database/updateArea
 	@GetMapping(value = "updateArea")
 	@ResponseBody
 	boolean updateArea() {
@@ -167,7 +168,7 @@ public class DatabaseManagementController {
 	}
 	
 	
-	//http://localhost:8080/dgaindia/database/updateAspirationalArea?areaIds=8,10
+	//http://localhost:8080/uphc-mh/database/updateAspirationalArea?areaIds=8,10
 //	areaIds of aspiretional District areaId in requestParam
 	@GetMapping(value = "updateAspirationalArea")
 	@ResponseBody
@@ -188,7 +189,7 @@ public class DatabaseManagementController {
 	}
 //	
 
-//	http://localhost:8080/dgaindia/database/configureUserDatabase
+//	http://localhost:8080/uphc-mh/database/configureUserDatabase
 	@GetMapping("configureUserDatabase")
 	@ResponseBody
 	boolean configureUserDatabase() {
