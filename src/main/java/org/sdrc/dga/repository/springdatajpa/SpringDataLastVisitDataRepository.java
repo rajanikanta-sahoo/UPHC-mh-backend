@@ -394,8 +394,8 @@ public interface SpringDataLastVisitDataRepository extends
 		List<LastVisitData> findfacilitesCovered(@Param("timePeriodId") List<Integer> timePeriodId,@Param("formMetaId")	Integer formMetaId);
 		
 		@Override
-		@Query(value ="select * from LastVisitData where IsLive =1 and timePeriodId=:timePeriodId and formId=:formId and AreaId in " + 
-				"(select a.AreaId from Area a left join Area a2 on a2.AreaId=a.ParentAreaId where a.AreaLevelId=8 and a2.ParentAreaId=:areaId) order by IsFinalized", nativeQuery=true)
+		@Query(value ="select * from LastVisitData where IsLive =1 and timePeriodId=:timePeriodId and formId=:formId and IsFinalized=0 and AreaId in " + 
+				"(select a.AreaId from Area a left join Area a2 on a2.AreaId=a.ParentAreaId left join Area a3 on a3.AreaId=a2.ParentAreaId where  a3.ParentAreaId=:areaId) order by AreaId", nativeQuery=true)
 		List<LastVisitData> findByDistrictId(@Param("areaId") int areaId,@Param("timePeriodId") int timePeriodId,@Param("formId") int formId);
 		
 		@Override
@@ -407,5 +407,9 @@ public interface SpringDataLastVisitDataRepository extends
 		@Override
 		@Query(value ="select * from LastVisitData where FormId=:formId and timePeriodId=:timePeriodId and AreaId=:areaid and IsFinalized =1", nativeQuery=true)
 		LastVisitData getByXFormTimPeriodAreaIsFinalized(@Param("formId") int formId,@Param("timePeriodId") int timePeriodId,@Param("areaid") int areaid);
+		
+		@Override
+		@Query(value ="select * from LastVisitData where FormId=:formId and timePeriodId=:timePeriodId and AreaId=:areaid and IsFinalized =0", nativeQuery=true)
+		List<LastVisitData> getByXFormTimPeriodAreaIsNotFinalized(@Param("formId") int formId,@Param("timePeriodId") int timePeriodId,@Param("areaid") int areaid);
 		
 }

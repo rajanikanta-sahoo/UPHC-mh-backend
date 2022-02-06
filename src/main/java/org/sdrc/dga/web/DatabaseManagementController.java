@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.sdrc.dga.model.CollectUserModel;
+import org.sdrc.dga.model.FipDistrict;
 import org.sdrc.dga.model.FormModel;
 import org.sdrc.dga.model.InitalDataModel;
 import org.sdrc.dga.model.SubmissionDataModel;
@@ -17,6 +18,7 @@ import org.sdrc.dga.service.ODKService;
 import org.sdrc.dga.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,8 +51,8 @@ public class DatabaseManagementController {
 	@Autowired
 	private UserService userService;
 
-	@Autowired
-	private FIPService fipService;
+//	@Autowired
+//	private FIPService fipService;
 	
 	@Autowired
 	private FinalizeService finalizeService;
@@ -243,8 +245,9 @@ public class DatabaseManagementController {
 	
 	@GetMapping("/getActiveSubmissions")
 	@ResponseBody
-	private List<SubmissionDataModel> getActiveSubmissions(@RequestParam("areaId") int areaId,@RequestParam("timePeriodId") int timePeriodId,@RequestParam("formId") int formId) throws Exception
+	private List<SubmissionDataModel> getActiveSubmissions(@RequestParam("areaId") Integer areaId,@RequestParam("timePeriodId") Integer timePeriodId,@RequestParam("formId") Integer formId) throws Exception
 	{
+		
 		return finalizeService.getActiveSubmissions(areaId, timePeriodId, formId);
 	}
 	
@@ -296,5 +299,25 @@ public class DatabaseManagementController {
 	private Boolean importLegacyData(@RequestParam("timePeriodId") int timePeriodId,@RequestParam("formId") int formId,@RequestParam("file") MultipartFile file) throws Exception
 	{
 		return legacyDataImportService.importLegacyData(timePeriodId, formId, file);
+	}
+	
+	@GetMapping("/")
+	@ResponseBody
+	String wellcome() {
+		return "Welcome to UPHC MH";
+	}
+	
+	@GetMapping("/acceptSubmission")
+	@ResponseBody
+	private Boolean acceptSubmission(@RequestParam("lastVistDataId") int lastVistDataId) throws Exception
+	{
+		return finalizeService.acceptSubmission(lastVistDataId);
+	}
+	
+	
+	@GetMapping("/getFinalizeDistrict")
+	@ResponseBody
+	public List<FipDistrict> getFinalizeDistrict(@RequestParam("stateId") Integer stateId) {
+		return finalizeService.getFinalizeDistrict(stateId);
 	}
 }

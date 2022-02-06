@@ -557,7 +557,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 															// here instead of
 															// calling method,
 															// by sarita
-			Map<String, Area> areaMap = areaRepository.findAll().stream().collect(Collectors.toMap(Area :: getAreaName, a->a));
+//			Map<String, Area> areaMap = areaRepository.findAll().stream().collect(Collectors.toMap(Area :: getAreaName, a->a));
 
 			// Extraction area code(AreaId in devinfo term)
 			if (postSubmissionModel.getxFormModel() != null) {
@@ -579,8 +579,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 											.compile("/data"
 													+ areaXPath) 
 											.evaluate(doc);
-System.out.println("areaCode->"+areaXPath+"->"+areaCode);
-areaCode = areaMap.get(areaCode).getAreaCode();
+//System.out.println("areaCode->"+areaXPath+"->"+areaCode);
+//areaCode = areaMap.get(areaCode).getAreaCode();
 									// Checking whether we got the area code or
 									// not
 									if (areaCode != null && !areaCode.equals("")) {

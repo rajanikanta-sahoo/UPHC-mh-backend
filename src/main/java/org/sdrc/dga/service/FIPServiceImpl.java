@@ -547,6 +547,7 @@ public class FIPServiceImpl implements FIPService {
 
 			List<Area> facilities = map.get(district.getAreaId());
 			blocks = new ArrayList<Integer>();
+			if(facilities !=null) {
 			for (Area facility : facilities) {
 				FipFacility fipFacility = new FipFacility();
 				
@@ -575,7 +576,7 @@ public class FIPServiceImpl implements FIPService {
 				}
 				
 
-			}
+			}}
 
 			fipDistrict.setFacilites(fipFasilites);
 			fipDistricts.add(fipDistrict);

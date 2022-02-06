@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,10 +26,13 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.sdrc.devinfo.repository.TimeperiodRepository;
+import org.sdrc.dga.domain.Area;
 import org.sdrc.dga.domain.FormXpathScoreMapping;
 import org.sdrc.dga.domain.LastVisitData;
 import org.sdrc.dga.domain.RawDataScore;
 import org.sdrc.dga.model.AreaModel;
+import org.sdrc.dga.model.FipDistrict;
+import org.sdrc.dga.model.FipFacility;
 import org.sdrc.dga.model.FormModel;
 import org.sdrc.dga.model.InitalDataModel;
 import org.sdrc.dga.model.SubmissionDataModel;
@@ -91,10 +95,12 @@ public class FinalizeServiceImpl implements FinalizeService {
 				.filter(a -> a.getForm().getFormId() == formId).collect(Collectors.toList());
 
 		List<SubmissionDataModel> modelList = new ArrayList<>();
+		
+		Map<String, Area> facilityMap = areaRepository.findByAreaLevelAreaLevelIdIn(Arrays.asList(5,6,7,8,9,10)).parallelStream().collect(Collectors.toMap(Area :: getAreaCode, a->a));
 
 		allData.forEach(a -> modelList.add(new SubmissionDataModel(a.getLastVisitDataId(), a.getInstanceId(),
 				a.getMarkedAsCompleteDate(), a.getUser().getName(), areaMap.get(a.getArea().getAreaId())[3].toString(),
-				fasilityNameMap.get(a.getLastVisitDataId()).getScore(),
+				facilityMap.get(fasilityNameMap.get(a.getLastVisitDataId()).getScore()).getAreaName(),
 				facilityList.size() > 0 ? facilityList.get(0).getLabel().substring(16) : "", a.getxForm().getFormId(),
 				a.getArea().getAreaId(), a.getTimPeriod().getTimePeriodId(), a.isFinalized(), a.getArea().getAreaName(),
 				a.getxForm().getxFormIdTitle(), a.getTimPeriod().getShortName())));
@@ -111,7 +117,14 @@ public class FinalizeServiceImpl implements FinalizeService {
 				.findByAreaAndTimPeriodAndXForm(lvd.getArea(), lvd.getTimPeriod(), lvd.getxForm()).isEmpty();
 	}
 
-	//
+	/*
+	 * when user submit form for a area,form, and timePeriod then as usual form data is inserted on lastVisit
+	 * and rawDataScore table, when one record comes with 1st unick combination will send to generate for facilityScore 
+	 * and makes that submission as finalize on lastVisitData table.
+	 * After 1st submission all other submission comes for that combination facilityScore 
+	 * will not generate and finalize field of lastvisitData will stay false.
+	 * When admin wants to make any other submission finalize the this method will call and facilityScore will generated for that submission
+	*/
 	@Override
 	public Boolean makeSubmissionFinalize(int lastVisitDataId) {
 
@@ -125,9 +138,13 @@ public class FinalizeServiceImpl implements FinalizeService {
 			lvd2.setFinalized(false);
 			lastVisitDataRepository.save(lvd2);
 		}
+		
+		
 
 		return odkService.aproveAndFinalizeLastVisitData(lastVisitDataId);
 	}
+	
+	
 
 	@Override
 	@Transactional(readOnly = true)
@@ -570,6 +587,122 @@ public class FinalizeServiceImpl implements FinalizeService {
 		timeperiodRepository.findAll();
 		areaRepository.findAll();
 		return null;
+	}
+
+	@Override
+	public Boolean acceptSubmission(int lastVisitDataId) {
+		LastVisitData lvd = lastVisitDataRepository.findByLastVisitDataIdAndIsLiveTrue(lastVisitDataId);
+//		lastVisitDataRepository.updateLastVisitDataForFinalize(lvd.getxForm().getFormId(),
+//				lvd.getTimPeriod().getTimePeriodId(), lvd.getArea().getAreaId(), lastVisitDataId);
+		LastVisitData lvd2 = lastVisitDataRepository.getByXFormTimPeriodAreaIsFinalized(lvd.getxForm().getFormId(),
+				lvd.getTimPeriod().getTimePeriodId(), lvd.getArea().getAreaId());
+
+		if (lvd2 != null) {
+			lvd2.setFinalized(false);
+			lastVisitDataRepository.save(lvd2);
+			lvd.setFinalized(false);
+			lastVisitDataRepository.save(lvd);
+		}
+
+		return true;
+	}
+
+	@Override
+	public List<FipDistrict> getFinalizeDistrict(int stateId) {
+
+		List<FipDistrict> fipDistricts = new ArrayList<FipDistrict>();
+		List<Area> districts = areaRepository.findDistrictWithStateId(stateId);
+		List<Area> blockFacilites = areaRepository.findAreaDataModelWithDistrict(stateId);
+		List<Integer> blocks;
+		Map<Integer,List<Area>> blockFacilitesMap = new HashMap<>();
+		ArrayList<Area> areasList;
+		for(Area area : blockFacilites) {
+			if(blockFacilitesMap.containsKey(area.getParentAreaId())) {
+				areasList = (ArrayList<Area>) blockFacilitesMap.get(area.getParentAreaId());
+				areasList.add(area);
+				blockFacilitesMap.put(area.getParentAreaId(),areasList);
+			}else {
+				areasList = new ArrayList<Area>();
+				areasList.add(area);
+				blockFacilitesMap.put(area.getParentAreaId(),areasList);
+			}
+			
+		}
+		
+		
+		List<Integer> list = new ArrayList<>();
+		
+		Map<Integer , List<Area>> map = new HashMap<>();
+		
+		districts.forEach(v->{
+	
+			list.add(v.getAreaId());
+		});
+		
+		List<Area> areaList = new ArrayList<>();
+		List<Area> facilitieList = areaRepository.findByParentAreaIdIn(list);
+		
+		for(Area a : facilitieList) {
+			
+			if(map.containsKey(a.getParentAreaId())) {
+				map.get(a.getParentAreaId()).add(a);
+			}else {
+				
+				areaList = new ArrayList<>();
+				areaList.add(a);
+				map.put(a.getParentAreaId(), areaList);
+			}
+				
+		}
+		ArrayList<Area> fasilityAreas;
+		for (Area district : districts) {
+			FipDistrict fipDistrict = new FipDistrict();
+			
+			List<FipFacility> fipFasilites = new ArrayList<FipFacility>();
+
+			List<Area> facilities = map.get(district.getAreaId());
+			blocks = new ArrayList<Integer>();
+			if(facilities !=null) {
+			for (Area facility : facilities) {
+				FipFacility fipFacility = new FipFacility();
+				
+				if (facility.getAreaLevel().getAreaLevelId() == 5) {
+					blocks.add(facility.getAreaId());
+					if(blockFacilitesMap.containsKey(facility.getAreaId())) {
+						fasilityAreas = (ArrayList<Area>) blockFacilitesMap.get(facility.getAreaId());
+						
+						for(Area blockFasilties : fasilityAreas) {
+							FipFacility fipFacility1 = new FipFacility();
+							fipFacility1.setAreaId(blockFasilties.getAreaId());
+							fipFacility1.setAreaLevelId(blockFasilties.getAreaLevel().getAreaLevelId());
+							fipFacility1.setFacilityCode(blockFasilties.getAreaCode());
+							fipFacility1.setFacilityName(blockFasilties.getAreaName());
+							fipFasilites.add(fipFacility1);
+						}
+						
+					}
+
+				} else {
+					fipFacility.setAreaId(facility.getAreaId());
+					fipFacility.setAreaLevelId(facility.getAreaLevel().getAreaLevelId());
+					fipFacility.setFacilityCode(facility.getAreaCode());
+					fipFacility.setFacilityName(facility.getAreaName());
+					fipFasilites.add(fipFacility);
+				}
+				
+
+			}}
+
+			if(fipFasilites.size()>0) {
+			fipDistrict.setAreaId(district.getAreaId());
+			fipDistrict.setAreaName(district.getAreaName());
+			fipDistrict.setFacilites(fipFasilites);
+			fipDistricts.add(fipDistrict);
+			}
+		}
+
+		return fipDistricts;
+	
 	}
 
 }

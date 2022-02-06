@@ -1058,8 +1058,8 @@ public class ODKServiceImpl implements ODKService {
 				}
 			}
 
-			Map<String, Area> areaMap2 = areaDetailsRepository.findAll().stream()
-					.collect(Collectors.toMap(Area::getAreaName, a -> a));
+//			Map<String, Area> areaMap2 = areaDetailsRepository.findAll().stream()
+//					.collect(Collectors.toMap(Area::getAreaName, a -> a));
 
 			LastVisitData lastVisitDatas = lastVisitDataRepository.findByLastVisitDataIdAndIsLiveTrue(lastvistitDataId);
 			Map<String, LastVisitData> lastVisitDataMap = new HashMap<String, LastVisitData>();
@@ -1070,7 +1070,7 @@ public class ODKServiceImpl implements ODKService {
 					lastVisitDatas.getArea(), lastVisitDatas.getTimPeriod(), lastVisitDatas.getxForm());
 			XForm xform = xFormRepository.findByFormId(lastVisitDatas.getxForm().getFormId());
 
-			if (availableData.isEmpty()) {
+			if (availableData.size()<=1) {
 				String baseUrl = xform.getOdkServerURL().concat("view/submissionList");
 				String serverURL = xform.getOdkServerURL();
 				String userName = xform.getUsername();
@@ -1287,8 +1287,8 @@ public class ODKServiceImpl implements ODKService {
 				}
 			}
 
-			Map<String, Area> areaMap2 = areaDetailsRepository.findAll().stream()
-					.collect(Collectors.toMap(Area::getAreaName, a -> a));
+//			Map<String, Area> areaMap2 = areaDetailsRepository.findAll().stream()
+//					.collect(Collectors.toMap(Area::getAreaName, a -> a));
 
 			LastVisitData lastVisitDatas = lastVisitDataRepository.findByLastVisitDataIdAndIsLiveTrue(lastvistitDataId);
 			Map<String, LastVisitData> lastVisitDataMap = new HashMap<String, LastVisitData>();
