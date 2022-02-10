@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.POIXMLProperties;
@@ -512,6 +513,17 @@ public class FIPServiceImpl implements FIPService {
 			}
 			
 		}
+		Map<Integer, List<Area>> facilityAreaMap = blockFacilites.parallelStream().collect(Collectors.groupingBy(Area :: getParentAreaId));
+		Map<Integer,List<Area>> facilityMap = new HashMap<>();
+		for(Integer pid : blockFacilitesMap.keySet()) {
+			List<Area> facilityOfWords = new ArrayList<>();
+			for(Area a : blockFacilitesMap.get(pid)) {
+				List<Area> farea = facilityAreaMap.get(a.getAreaId());
+				if(farea!=null)
+				facilityOfWords.addAll(farea);
+			}
+			facilityMap.put(pid, facilityOfWords);
+		}
 		
 		
 		List<Integer> list = new ArrayList<>();
@@ -553,8 +565,8 @@ public class FIPServiceImpl implements FIPService {
 				
 				if (facility.getAreaLevel().getAreaLevelId() == 5) {
 					blocks.add(facility.getAreaId());
-					if(blockFacilitesMap.containsKey(facility.getAreaId())) {
-						fasilityAreas = (ArrayList<Area>) blockFacilitesMap.get(facility.getAreaId());
+					if(facilityMap.containsKey(facility.getAreaId())) {
+						fasilityAreas = (ArrayList<Area>) facilityMap.get(facility.getAreaId());
 						
 						for(Area blockFasilties : fasilityAreas) {
 							FipFacility fipFacility1 = new FipFacility();

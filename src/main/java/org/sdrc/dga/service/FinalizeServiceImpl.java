@@ -97,7 +97,7 @@ public class FinalizeServiceImpl implements FinalizeService {
 		List<SubmissionDataModel> modelList = new ArrayList<>();
 		
 		Map<String, Area> facilityMap = areaRepository.findByAreaLevelAreaLevelIdIn(Arrays.asList(5,6,7,8,9,10)).parallelStream().collect(Collectors.toMap(Area :: getAreaCode, a->a));
-
+		
 		allData.forEach(a -> modelList.add(new SubmissionDataModel(a.getLastVisitDataId(), a.getInstanceId(),
 				a.getMarkedAsCompleteDate(), a.getUser().getName(), areaMap.get(a.getArea().getAreaId())[3].toString(),
 				facilityMap.get(fasilityNameMap.get(a.getLastVisitDataId()).getScore()).getAreaName(),

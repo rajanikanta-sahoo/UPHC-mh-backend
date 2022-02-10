@@ -57,6 +57,8 @@ import org.sdrc.dga.repository.LastVisitDataRepository;
 import org.sdrc.dga.repository.RawDataScoreRepository;
 import org.sdrc.dga.repository.RawFormXapthsRepository;
 import org.sdrc.dga.repository.XFormRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,6 +103,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 	SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 	SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy");
+	private static final Logger logger = LoggerFactory.getLogger(MasterRawDataServiceImpl.class);
 
 	/*
 	 * (non-Javadoc)
@@ -510,7 +513,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 
 	@Override
 	public boolean persistData(PostSubmissionModel postSubmissionModel) throws Exception {
-
+System.out.println("step1------------------->");logger.warn("step1------------------------>");
 		List<Area> areaDetails = areaRepository.findAll();
 
 		List<RawFormXapths> rawFormXapths = rawFormXapthsRepository
@@ -521,14 +524,14 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 		for (Area area : areaDetails) {
 			areaMap.put(area.getAreaCode(), area);
 		}
-
+System.out.println("step2-------------------------->");logger.warn("step2------------------------>");
 		for (Area area : areaDetails) {
 			if (area.getAreaLevel().getAreaLevelId() == 4) {
 				areaMap.put(area.getParentAreaId() + "_" + area.getAreaName(), area);
 			}
 		}
 		XForm xform = xFormRepository.findByFormId(postSubmissionModel.getxFormModel().getFormId());
-
+System.out.println("step3--------------------------------->");logger.warn("step3------------------------>");
 		{
 			String baseUrl = xform.getOdkServerURL().concat("view/submissionList");
 			String serverURL = xform.getOdkServerURL();
@@ -543,7 +546,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 			XmlSerializer serializer = new KXmlSerializer();
 
 			String formRooTitle = "";
-
+System.out.println("step4------------------------------>");logger.warn("step4------------------------>");
 			StringWriter base_xlsForm = getXML(xform.getxFormId(), serverURL, userName, password,
 					base_xml_download_url);
 
@@ -557,7 +560,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 				Element eElement = (Element) core_xml_doc.getElementsByTagName("group").item(0);
 				formRooTitle = eElement.getAttribute("ref").split("/")[1];
 			}
-
+System.out.println("step5---------------------------->");logger.warn("step5------------------------>");
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("formId", xform.getxFormId());
 			params.put("cursor", "");
@@ -577,33 +580,43 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 
 			if (doc_id_list != null) {
 				doc_id_list.getDocumentElement().normalize();
-
+System.out.println("step6------------------------->");logger.warn("step6------------------------>");
 				NodeList nodeIdList = doc_id_list.getElementsByTagName("id");
 				// LocalDateTime currentDate = LocalDateTime.now();
 				// LocalDateTime dbMarkedAsCompleteDateTime = null;
 				// String dbMarkedAsCompleteDate = null;
+				System.out.println("nodeList lenth -------------->"+nodeIdList.getLength());
+				logger.error("nodeList lenth -------------->"+nodeIdList.getLength());
+//				logger.error("instancId from Odk->"+instance_id+", id from lvd-->"+postSubmissionModel.getInstanceId());
+			List<String> logList = new ArrayList<>();
 				for (int node_no = 0; node_no < nodeIdList.getLength(); node_no++) {
+					
 					String instance_id = nodeIdList.item(node_no).getFirstChild().getNodeValue();
+					System.out.println("instancId from Odk->"+instance_id+", id from lvd-->"+postSubmissionModel.getInstanceId());
+					logger.error("instancId from Odk->"+instance_id+", id from lvd-->"+postSubmissionModel.getInstanceId());
+					logList.add("instancId from Odk->"+instance_id+", id from lvd-->"+postSubmissionModel.getInstanceId());
 					if (instance_id.trim().equals(postSubmissionModel.getInstanceId().trim())) {
 						String link_formID = generateFormID(xform.getxFormId(), formRooTitle, instance_id);
 						Map<String, String> submiteParams = new HashMap<String, String>();
 						submiteParams.put("formId", link_formID);
 						String full_url = WebUtils.createLinkWithProperties(submission_xml_url, submiteParams);
-
+						logger.error("fullUrl--->"+full_url);
 						serializer = new KXmlSerializer();
 						StringWriter data_writer = new StringWriter();
 						result = AggregateUtils.getXmlDocument(full_url, serverInfo, false, submissionDescription,
 								null);
 						serializer.setOutput(data_writer);
 						result.doc.write(serializer);
-
+logger.error("resul uptend");
 						Document submission_doc = dBuilder.parse(
 								new InputSource(new ByteArrayInputStream(data_writer.toString().getBytes("utf-8"))));
 						XPath xPath = XPathFactory.newInstance().newXPath();
+						logger.error("xpath"+xPath);
 						submission_doc.getDocumentElement().normalize();
-
+System.out.println("step7--------------------------->");logger.error("step7------------------------>");
 						LastVisitData lvd = new LastVisitData();
 						lvd.setLastVisitDataId(postSubmissionModel.getLastVisitDataModel().getLastVisitDataId());
+						System.out.println("rawFormXpath lenth-------------->"+rawFormXapths.size()); logger.error("rawFormXpath lenth-------------->"+rawFormXapths.size());
 						for (RawFormXapths formXapths : rawFormXapths) {
 							RawDataScore rawDataScore = new RawDataScore();
 							String score = null;
@@ -619,7 +632,9 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 							rawDataScore.setLastVisitData(lvd);
 							rawDataScore.setRawFormXapths(formXapths);
 							rawDataScore.setScore(score);
-							rawDataScoreRepository.save(rawDataScore);
+							RawDataScore data = rawDataScoreRepository.save(rawDataScore);
+							System.out.println("rawDataScore Saved for lvd->"+lvd.getLastVisitDataId()+", path-> "+formXapths.getxPathId()+", score->"+score+", scoreId->"+data.getRawDataScoreId());
+							logger.info("rawDataScore Saved for lvd->"+lvd.getLastVisitDataId()+", path-> "+formXapths.getxPathId()+", score->"+score+", scoreId->"+data.getRawDataScoreId());
 						}
 
 						return true;
@@ -627,7 +642,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 
 				}
 				
-				
+				logger.error("list->"+logList.toString());
 			}
 			return true;
 
@@ -752,6 +767,8 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 								for (String areaPath : xform.getAreaXPath().split(",")) {
 									String areaCode = xPath.compile("/submission/data/" + rootElement + areaPath)
 											.evaluate(submission_doc);
+									System.out.println("path---->"+"/submission/data/" + rootElement + areaPath+"areaCode---->"+areaCode);
+									logger.info("path---->"+"/submission/data/" + rootElement + areaPath+"areaCode---->"+areaCode);
 									if (areaCode != null && !areaCode.equalsIgnoreCase("")) {
 										if (areaMap
 												.containsKey(xPath.compile("/submission/data/" + rootElement + areaPath)
@@ -1150,7 +1167,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 	@Transactional
 	public boolean updateArea() throws Exception {
 
-		String inputFilePath = "C:\\Users\\Lulu\\Documents\\sdrc\\dga-mh\\DGA_Maharastra_Checklist\\areaTamplate.xlsx";
+		String inputFilePath = "C:\\Users\\Lulu\\Documents\\sdrc\\dga-mh\\DGA_Maharastra_Checklist\\areaTamplate_r1.xlsx";
 		FileInputStream fileInputStream = new FileInputStream(inputFilePath);
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
 
@@ -1168,6 +1185,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 			Cell areaName = row.getCell(2);
 			Cell parentCode = row.getCell(3);
 			Cell areaLevel = row.getCell(4);
+			
 //			System.out.println(areaCode + "-" + areaName);
 			if (!areaMap.containsKey(areaCode.getStringCellValue())) {
 				Area area = new Area();

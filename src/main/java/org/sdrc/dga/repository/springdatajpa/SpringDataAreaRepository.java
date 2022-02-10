@@ -43,6 +43,6 @@ public interface SpringDataAreaRepository extends AreaRepository,
 	@Override
 	@Query(value ="select a1.AreaId as id, a1.AreaName as fasility,a2.AreaName as muncipality,"
 			+ "a3.AreaName as district from Area a1 join Area a2 on a2.AreaId=a1.ParentAreaId "
-			+ "join Area a3 on a3.AreaId=a2.ParentAreaId where a1.AreaLevelId in (6,8)",nativeQuery = true)
+			+ "join Area a3 on a3.AreaId=a2.ParentAreaId where a1.AreaLevelId in (7,8,9,10)",nativeQuery = true)
 	List<Object[]> getFacilityDistrics() throws DataAccessException;
 }

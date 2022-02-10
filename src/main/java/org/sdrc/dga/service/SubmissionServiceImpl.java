@@ -505,8 +505,9 @@ public class SubmissionServiceImpl implements SubmissionService {
 			PostSubmissionModel postSubmissionModelReturned = saveLastVisitRecord(submissionFile, postSubmissionModel);
 			
 			if (postSubmissionModelReturned != null) {
+				System.out.println("persistDat() called");logger.warn("persistDAta() called ->"+postSubmissionModelReturned.getInstanceId());
 				masterRawDataService.persistData(postSubmissionModelReturned);
-				
+				System.out.println("finalize() called");logger.warn("finalize() called");
 				//Here we are inserting FacilityScore and finalizing LastvisitData  
 				odkService.finalizeLastVisitData(postSubmissionModelReturned.getLastVisitDataModel().getLastVisitDataId());
 				
@@ -521,7 +522,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 						+ postSubmissionModel.getCollectUserModel().getName());
 			}
 
-		} catch (Exception e) { e.printStackTrace(); e.printStackTrace();
+		} catch (Exception e) { e.printStackTrace();
 			logger.error("Exception in getting submission file for xForm "
 					+ postSubmissionModel.getxFormModel().getxFormTitle() , e);
 		}

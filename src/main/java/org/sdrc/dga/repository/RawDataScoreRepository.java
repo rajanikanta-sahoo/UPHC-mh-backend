@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RawDataScoreRepository {
 
 	@Transactional
-	void save(RawDataScore rawDataScore);
+	RawDataScore save(RawDataScore rawDataScore);
 
 	List<RawDataScore> findByLastVisitDataLastVisitDataId(
 			Integer lastVisitDataId);
