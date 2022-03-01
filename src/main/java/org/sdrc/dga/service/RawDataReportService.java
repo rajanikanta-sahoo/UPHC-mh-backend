@@ -15,4 +15,6 @@ public interface RawDataReportService {
 	public List<TimePeriodModel> getAllPlanningTimePeriodForRawData(int stateId,String programId);
 	
 	public String getRawDataReportName(String programId,String facilityName,int timePeriodId,String stateId);
+	
+	public String getRawDataReport(String programId,String facilityName,int timePeriodId,String stateId);
 }

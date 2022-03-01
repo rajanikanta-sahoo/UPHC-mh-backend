@@ -455,10 +455,12 @@ public class SubmissionServiceImpl implements SubmissionService {
 				formToTransfer.setStatusString(msg, false);
 				EventBus.publish(new FormStatusEvent(formToTransfer));
 			}
-
+long tm = new Date().getTime();
 			boolean uploadSuccess = AggregateUtils.uploadFilesToServer(serverConnectionInfo, uri, "xml_submission_file",
 					file, formFilesMap.get(fileName), documentDescription, action, terminationFuture, formToTransfer);
-				if(true)
+			long tm2 = new Date().getTime();
+			System.out.println("time taken for upload---->"+(tm2-tm));
+			if(uploadSuccess)
 				{
 					PostSubmissionModel postSubmissionModel = new PostSubmissionModel();
 					xFormModel.setxFormIdByODK(xFormIdFromOdk);
@@ -479,6 +481,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 							.getBean("postSubmissionThread");
 					postSubmissionThread.setPostSubmissionModel(postSubmissionModel);
 					postSubmissionThread.start();
+					
+//					postSubmissionWork(postSubmissionModel);
 				
 				}
 
@@ -505,10 +509,17 @@ public class SubmissionServiceImpl implements SubmissionService {
 			PostSubmissionModel postSubmissionModelReturned = saveLastVisitRecord(submissionFile, postSubmissionModel);
 			
 			if (postSubmissionModelReturned != null) {
-				System.out.println("persistDat() called");logger.warn("persistDAta() called ->"+postSubmissionModelReturned.getInstanceId());
+//				long tm = new Date().getTime();
+//				masterRawDataService.wait(5000);
+//				Thread.currentThread().sleep(12000);
+//				long tm2 = new Date().getTime() - tm;
+//				logger.error("sleepTime-->"+tm2);
+//				System.out.println("persistDat() called");logger.warn("persistDAta() called ->"+postSubmissionModelReturned.getInstanceId());
 				masterRawDataService.persistData(postSubmissionModelReturned);
-				System.out.println("finalize() called");logger.warn("finalize() called");
+				
+//				System.out.println("finalize() called");logger.warn("finalize() called");
 				//Here we are inserting FacilityScore and finalizing LastvisitData  
+//				odkService.wait(5000);
 				odkService.finalizeLastVisitData(postSubmissionModelReturned.getLastVisitDataModel().getLastVisitDataId());
 				
 				logger.info("Last visit data(submission data) saved for xForm "
