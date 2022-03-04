@@ -81,4 +81,9 @@ public interface SpringDataXFormRepository extends XFormRepository, Repository<X
 			+ " xform.isLive = True AND xform.state.areaId =:stateId  AND xform.programXFormMapping.program.programId = :programId AND xform.timePeriod.stateId = :stateId")
 	List<TimePeriod> findDistinctTimPeriodByStateAreaIdAndProgramIdAndTimePeriodState2(@Param("stateId") int stateId,@Param("programId") int programId) ;
 	
+	
+	@Override
+	@Query("SELECT xform FROM XForm xform WHERE xform.isLive = True AND xform.xform_meta_id=:formMetaId And xform.state.areaId=:stateId")
+	public XForm findByFormMetaDataIdAndStateId(@Param("formMetaId") int formMetaId,
+			@Param("stateId") int stateId);
 }

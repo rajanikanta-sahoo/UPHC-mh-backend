@@ -412,4 +412,14 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query(value ="select * from LastVisitData where FormId=:formId and timePeriodId=:timePeriodId and AreaId=:areaid and IsFinalized =0", nativeQuery=true)
 		List<LastVisitData> getByXFormTimPeriodAreaIsNotFinalized(@Param("formId") int formId,@Param("timePeriodId") int timePeriodId,@Param("areaid") int areaid);
 		
+		
+		@Override
+		@Query("SELECT lvd "
+				+ " FROM LastVisitData lvd "
+				+ " WHERE lvd.isLive IS TRUE "
+				+	" AND lvd.xForm.xform_meta_id = :formMetaId "
+				
+				+ " ORDER BY lvd.timPeriod.timePeriodId Asc"
+				)
+		List<LastVisitData> findByIsLiveTrueAndXFormMetaIdOrderByTimPeriodTimePeriodIdAsc(@Param("formMetaId")	int formMetaId);
 }

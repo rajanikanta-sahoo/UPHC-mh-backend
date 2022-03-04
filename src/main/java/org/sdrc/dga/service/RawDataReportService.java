@@ -16,5 +16,5 @@ public interface RawDataReportService {
 	
 	public String getRawDataReportName(String programId,String facilityName,int timePeriodId,String stateId);
 	
-	public String getRawDataReport(String programId,String facilityName,int timePeriodId,String stateId);
+	public String getRawDataReport(String programId,String facilityName,int timePeriodId,String stateId) throws Exception;
 }

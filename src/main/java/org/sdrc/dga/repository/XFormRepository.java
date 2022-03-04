@@ -42,6 +42,8 @@ public interface XFormRepository {
 	List<XForm> findAllByIsCompleteFalse();
 	
 	List<Program> findAllProgramByState(int stateId);
+	
+	XForm findByFormMetaDataIdAndStateId(int metaId, int stateId);
 
 	List<TimePeriod> findDistinctTimPeriodByStateAreaIdAndProgramId(int stateId, int programId);
 	

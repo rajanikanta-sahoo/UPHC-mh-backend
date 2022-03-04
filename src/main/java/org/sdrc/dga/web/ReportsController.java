@@ -3,9 +3,12 @@ package org.sdrc.dga.web;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
 
 import org.sdrc.dga.model.AreaModel;
 import org.sdrc.dga.model.CrossTabDataModel;
@@ -25,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -197,19 +201,31 @@ public class ReportsController {
 		int timePeriodId = Integer.parseInt(datas[2]);
 		String stateId = datas[3];
 		String fileName = "";
+		InputStream inputStream;
 		try {
 			fileName = "";
 			// fileName = "DGA_2_CHC_Raw Data_r1.xlsx";
-			fileName = rawDataReportService.getRawDataReportName(programId, facilityName, timePeriodId, stateId);
+//			fileName = rawDataReportService.getRawDataReportName(programId, facilityName, timePeriodId, stateId);
 			File file;
+			fileName = rawDataReportService.getRawDataReport(programId, facilityName, timePeriodId, stateId);
 			if (fileName.length() > 1) {
-				file = ResourceUtils.getFile("classpath:rawData/" + fileName);
+				file = ResourceUtils.getFile( fileName);
 
 				HttpHeaders respHeaders = new HttpHeaders();
 				respHeaders.add("Content-Disposition", "attachment; filename=" + file.getName());
-				InputStreamResource isr = new InputStreamResource(new FileInputStream(file));
-				// new File(filePath).delete();
+				FileInputStream fis = new FileInputStream(file);
+				InputStreamResource isr = new InputStreamResource(fis);
 				return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
+				
+				/*
+				 * inputStream = new FileInputStream(fileName); String headerKey =
+				 * "Content-Disposition"; String headerValue =
+				 * String.format("attachment; filename=\"%s\"", new
+				 * java.io.File(fileName).getName()); response.setHeader(headerKey,
+				 * headerValue); response.setContentType("application/octet-stream"); // for all
+				 * file type ServletOutputStream outputStream = response.getOutputStream();
+				 * FileCopyUtils.copy(inputStream, outputStream); outputStream.close();
+				 */
 			} else {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 			}

@@ -139,4 +139,6 @@ public interface LastVisitDataRepository {
     List<LastVisitData> findByIsLiveTrueAndTimPeriodTimePeriodIdAndXFormFormId(Integer timePeriodId, Integer xFormId);
     
     List<LastVisitData> getByXFormTimPeriodAreaIsNotFinalized(int formId,int timePeriodId,int areaid);
+    
+    List<LastVisitData> findByIsLiveTrueAndXFormMetaIdOrderByTimPeriodTimePeriodIdAsc(int formMetaId);
 }

@@ -58,6 +58,7 @@ public class Constants {
 		public static final String TEMPLATE_EXCEL_PATH = "template.excel.path";
 		public static final String FIP_TEMPLATE_EXCEL_PATH = "fip.template.excel.path";
 		public static final String SUBMISSION_EXCEL_UPLOAD_FOLDER_NAME = "submission.upload.folder.name";
+		public static final String RAW_TEMPLATE_EXCEL_PATH = "raw.template.excel.path";
 
 		// xform xpath
 		public static final String BEGIN_GROUP_XPATH = "begin.group.xpath";
