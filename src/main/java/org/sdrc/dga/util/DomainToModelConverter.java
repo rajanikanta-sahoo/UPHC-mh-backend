@@ -25,7 +25,7 @@ public class DomainToModelConverter {
 		AreaLevelModel areaLevelModel = new AreaLevelModel();
 		
 		areaLevelModel.setAreaLevelId(areaLevel.getAreaLevelId());
-		areaLevelModel.setAreaLevelName(areaLevel.getAreaLevelName());
+		areaLevelModel.setAreaLevelName(areaLevel.getAreaLevelName().equals("District")?"Covid":areaLevel.getAreaLevelName());
 		
 		return areaLevelModel;
 	}

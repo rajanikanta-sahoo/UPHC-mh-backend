@@ -91,12 +91,12 @@ public class FIPServiceImpl implements FIPService {
 	@Transactional(readOnly = true)
 	public String generateFIP(String areaCode, int formMetaId, int stateId) throws IOException {
 		
-		if(areaCode.length()==9) {
-			areaCode=areaRepository.findByParentAreaIdAndAreaLevelAreaLevelId(areaRepository.findByAreaCode(areaCode).getAreaId(),6).getAreaCode();
-		}
+//		if(areaCode.length()==9) {
+//			areaCode=areaRepository.findByParentAreaIdAndAreaLevelAreaLevelId(areaRepository.findByAreaCode(areaCode).getAreaId(),6).getAreaCode();
+//		}
 
 		List<LastVisitData> lvds = lastVisitDataRepository
-				.findByAreaAreaCodeAndIsLiveTrueAndXFormMetaIdOrderByTimPeriodTimePeriodIdAsc(areaCode, formMetaId);
+				.findByAreaAreaCodeAndIsLiveTrueAndXFormMetaIdIsisFinalizedTrueOrderByTimPeriodTimePeriodIdAsc(areaCode, formMetaId);
 		
 //		boolean dataAvalable= false;
 //		List<Integer> avlTimePeriod = new ArrayList();
@@ -355,7 +355,6 @@ public class FIPServiceImpl implements FIPService {
 //					if(typeCell.getStringCellValue().equalsIgnoreCase(messages.getMessage(
 //							Constants.NOTE_XPATH, null, null)))
 //						continue;
-
 								if (typeCell.getStringCellValue()
 										.equalsIgnoreCase(messages.getMessage(Constants.BEGIN_GROUP_XPATH, null, null))
 										|| typeCell.getStringCellValue().equalsIgnoreCase(
@@ -375,8 +374,6 @@ public class FIPServiceImpl implements FIPService {
 										.equalsIgnoreCase(messages.getMessage(Constants.END_GROUP_XPATH, null, null))
 										|| typeCell.getStringCellValue().equalsIgnoreCase(
 												messages.getMessage(Constants.END_REPEAT_XPATH, null, null))||typeCell
-										.getStringCellValue().equalsIgnoreCase(
-												"begin_group")||typeCell
 										.getStringCellValue().equalsIgnoreCase(
 												"end_group")) {
 									splittingStr = queryString.toString()
@@ -555,6 +552,7 @@ public class FIPServiceImpl implements FIPService {
 			FipDistrict fipDistrict = new FipDistrict();
 			fipDistrict.setAreaId(district.getAreaId());
 			fipDistrict.setAreaName(district.getAreaName());
+			fipDistrict.setAreaCode(district.getAreaCode());
 			List<FipFacility> fipFasilites = new ArrayList<FipFacility>();
 
 			List<Area> facilities = map.get(district.getAreaId());

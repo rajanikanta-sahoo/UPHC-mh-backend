@@ -83,7 +83,7 @@ public class HeaderFooter extends PdfPageEventHelper {
 			image.scalePercent(scaler);
 			image.setAbsolutePosition(0, document.getPageSize().getHeight()
 					+ document.topMargin() - image.getHeight());
-			document.add(image);
+//			document.add(image);
 			document.add(Chunk.NEWLINE);
 			document.add(Chunk.NEWLINE);
 			document.add(Chunk.NEWLINE);

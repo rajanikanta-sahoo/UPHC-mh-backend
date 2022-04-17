@@ -21,6 +21,7 @@ public interface SpringDataLastVisitDataRepository extends
 			+" WHERE lastVisitData.isLive IS TRUE " 
 			+" AND lastVisitData.lastVisitDataId = score.lastVisitData.lastVisitDataId "
 			+" AND lastVisitData.xForm.formId = xForm.formId "
+			+" AND lastVisitData.isFinalized IS TRUE "
 			+ "AND formScore.formXpathScoreId =:sectorId"
 			+" AND score.formXpathScoreMapping.formXpathScoreId = formScore.formXpathScoreId "
 			+" AND xForm.formId = :formId"
@@ -40,6 +41,7 @@ public interface SpringDataLastVisitDataRepository extends
 	@Query("SELECT lastVisitData, score, xForm, formScore,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
 			+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore "
 			+" WHERE lastVisitData.isLive IS TRUE "
+			+" AND lastVisitData.isFinalized IS TRUE "
 			+ "AND lastVisitData.area.parentAreaId=:areaId " 
 			+" AND score.lastVisitData.lastVisitDataId = lastVisitData.lastVisitDataId "
 			+" AND lastVisitData.xForm.formId = xForm.formId "
@@ -55,10 +57,12 @@ public interface SpringDataLastVisitDataRepository extends
 	
 	@Override
 	@Query("SELECT lastVisitData, score, xForm, formScore,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
-			+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore,Area area "
+			+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore,Area area, Area area2 "
 			+" WHERE lastVisitData.isLive IS TRUE "
+			+" AND lastVisitData.isFinalized IS TRUE "
+			+ " AND area2.parentAreaId = area.areaId"
 			+ " AND area.parentAreaId=:areaId " 
-			+ "AND lastVisitData.area.parentAreaId =area.areaId "
+			+ "AND lastVisitData.area.parentAreaId =area2.areaId "
 			+" AND score.lastVisitData.lastVisitDataId = lastVisitData.lastVisitDataId "
 			+" AND lastVisitData.xForm.formId = xForm.formId "
 			+ "AND formScore.formXpathScoreId =:sectorId"
@@ -73,6 +77,7 @@ public interface SpringDataLastVisitDataRepository extends
 	@Query("SELECT formScore.label,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
 			+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore "
 			+" WHERE lastVisitData.isLive IS TRUE " 
+			+" AND lastVisitData.isFinalized IS TRUE "
 			+ "AND lastVisitData.area.areaId =:areaId "
 			+" AND score.lastVisitData.lastVisitDataId = lastVisitData.lastVisitDataId "
 			+" AND lastVisitData.xForm.formId = xForm.formId "
@@ -87,6 +92,7 @@ public interface SpringDataLastVisitDataRepository extends
 			+ "FROM LastVisitData lastVisitData,"
 			+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore"
 			+" WHERE lastVisitData.isLive IS TRUE " 
+			+" AND lastVisitData.isFinalized IS TRUE "
 			+ "AND lastVisitData.area.areaId =:areaId "
 			+" AND score.lastVisitData.lastVisitDataId = lastVisitData.lastVisitDataId "
 			+" AND lastVisitData.xForm.formId = xForm.formId "
@@ -101,6 +107,7 @@ public interface SpringDataLastVisitDataRepository extends
 	@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
 			+ " FROM LastVisitData lvd "
 			+ " WHERE lvd.isLive IS TRUE"
+			+" AND lvd.isFinalized IS TRUE "
 			+ " AND lvd.area.parentAreaId = :areaId"
 			+"  AND lvd.xForm.xform_meta_id = :formMetaId "
 			+ " GROUP BY lvd.area.parentAreaId")
@@ -109,10 +116,12 @@ public interface SpringDataLastVisitDataRepository extends
 	
 	@Override
 	@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
-			+ " FROM LastVisitData lvd ,Area ar"
+			+ " FROM LastVisitData lvd ,Area ar, Area ar2"
 			+ " WHERE lvd.isLive IS TRUE"
+			+" AND lvd.isFinalized IS TRUE "
+			+ " AND ar2.parentAreaId = ar.areaId"
 			+ " AND ar.parentAreaId=:areaId"
-			+ " AND lvd.area.parentAreaId = ar.areaId"
+			+ " AND lvd.area.parentAreaId = ar2.areaId"
 			+"  AND lvd.xForm.xform_meta_id = :formMetaId "
 			+ " GROUP BY ar.parentAreaId")
 	public List<Object[]> findMaxMinTimePeriodIdForADistrictPHCCHC(@Param("areaId")Integer areaId,@Param("formMetaId") Integer formMetaId);
@@ -122,6 +131,7 @@ public interface SpringDataLastVisitDataRepository extends
 	@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
 			+ " FROM LastVisitData lvd "
 			+ " WHERE lvd.isLive IS TRUE"
+			+" AND lvd.isFinalized IS TRUE "
 			+ " AND lvd.area.areaId =(SELECT lvd1.area.areaId from LastVisitData lvd1 where lvd1.lastVisitDataId = :lastVisitId)"
 			+ " GROUP BY lvd.area.areaId")
 	public List<Object[]> findMaxMinTimePeriodIdForAFacility(
@@ -131,6 +141,7 @@ public interface SpringDataLastVisitDataRepository extends
 	@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
 			+ " FROM LastVisitData lvd "
 			+ " WHERE lvd.isLive IS TRUE "
+			+" AND lvd.isFinalized IS TRUE "
 			+	" AND lvd.xForm.xform_meta_id = :formMetaId "
 			+ " AND lvd.xForm.state.areaId = :stateId"
 			)
@@ -141,6 +152,7 @@ public interface SpringDataLastVisitDataRepository extends
 	@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
 			+ " FROM LastVisitData lvd "
 			+ " WHERE lvd.isLive IS TRUE "
+			+" AND lvd.isFinalized IS TRUE "
 			+	" AND lvd.xForm.xform_meta_id = :formMetaId "
 			+ " AND lvd.xForm.state.areaId = :stateId"
 			)
@@ -151,6 +163,7 @@ public interface SpringDataLastVisitDataRepository extends
 	@Query("SELECT distinct lvd.timPeriod.timePeriodId"
 			+ " FROM LastVisitData lvd "
 			+ " WHERE lvd.isLive IS TRUE "
+			+" AND lvd.isFinalized IS TRUE "
 			+	" AND lvd.xForm.xform_meta_id = :formMetaId "
 			+ " AND lvd.xForm.state.areaId = :stateId"
 			)
@@ -159,13 +172,14 @@ public interface SpringDataLastVisitDataRepository extends
 
 		@Override
 		@Query("SELECT lvd FROM LastVisitData lvd "
-			+ " WHERE lvd.isLive IS TRUE AND lvd.xForm.formId IN :formId")
+			+ " WHERE lvd.isLive IS TRUE  AND lvd.isFinalized IS TRUE AND lvd.xForm.formId IN :formId")
 		public List<LastVisitData> findByIsLiveTrueAndxFormFormIdIn(@Param("formId")Set<Integer> ids);
 
 		@Override
 		@Query("SELECT lvd "
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE "
+				+" AND lvd.isFinalized IS TRUE "
 				+	" AND lvd.xForm.xform_meta_id = :formMetaId "
 				+ " AND lvd.area.areaCode = :areaCode"
 				+ " ORDER BY lvd.timPeriod.timePeriodId Asc"
@@ -194,10 +208,12 @@ public interface SpringDataLastVisitDataRepository extends
 		
 		@Override
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MAX(lvd.timPeriod.timePeriodId)-1,MIN(lvd.timPeriod.timePeriodId)"
-				+ " FROM LastVisitData lvd ,Area ar"
+				+ " FROM LastVisitData lvd ,Area ar, Area ar2"
 				+ " WHERE lvd.isLive IS TRUE"
+				+" AND lvd.isFinalized IS TRUE "
+				+ " AND ar2.parentAreaId = ar.areaId"
 				+ " AND ar.parentAreaId=:areaId"
-				+ " AND lvd.area.parentAreaId = ar.areaId"
+				+ " AND lvd.area.parentAreaId = ar2.areaId"
 				+"  AND lvd.xForm.xform_meta_id = :formMetaId "
 				+ " GROUP BY ar.parentAreaId")
 		public List<Object[]> findAllTimePeriodIdForADistrictPHCCHC(@Param("areaId")Integer areaId,@Param("formMetaId") Integer formMetaId);
@@ -207,6 +223,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MAX(lvd.timPeriod.timePeriodId)-1,MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE"
+				+" AND lvd.isFinalized IS TRUE "
 				+ " AND lvd.area.areaId =(SELECT lvd1.area.areaId from LastVisitData lvd1 where lvd1.lastVisitDataId = :lastVisitId)"
 				+ " GROUP BY lvd.area.areaId")
 		public List<Object[]> findAllTimePeriodIdForAFacility(
@@ -216,6 +233,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT distinct lvd.timPeriod.timePeriodId"
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE"
+				+" AND lvd.isFinalized IS TRUE "
 				+ " AND lvd.area.areaId =(SELECT lvd1.area.areaId from LastVisitData lvd1 where lvd1.lastVisitDataId = :lastVisitId)"
 				+ " GROUP BY lvd.area.areaId")
 		public List<Object[]> findAllDistictTimePeriodIdForAFacility(
@@ -225,6 +243,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MAX(lvd.timPeriod.timePeriodId)-1,MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE "
+				+" AND lvd.isFinalized IS TRUE "
 				+	" AND lvd.xForm.xform_meta_id = :formMetaId "
 				+ " AND lvd.xForm.state.areaId = :stateId"
 				)
@@ -232,10 +251,12 @@ public interface SpringDataLastVisitDataRepository extends
 		
 		@Override
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
-				+ " FROM LastVisitData lvd ,Area ar"
+				+ " FROM LastVisitData lvd ,Area ar, Area ar2"
 				+ " WHERE lvd.isLive IS TRUE"
+				+" AND lvd.isFinalized IS TRUE "
+				+ " AND ar2.parentAreaId = ar.areaId"
 				+ " AND ar.parentAreaId=:areaId"
-				+ " AND lvd.area.parentAreaId = ar.areaId"
+				+ " AND lvd.area.parentAreaId = ar2.areaId"
 				+"  AND lvd.xForm.xform_meta_id = :formMetaId "
 				+ " GROUP BY ar.parentAreaId")
 		public List<Object[]> findAllTimePeriodIdForADistrictPHCCHCForUhcAndHwc(@Param("areaId")Integer areaId,@Param("formMetaId") Integer formMetaId);
@@ -244,6 +265,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE"
+				+" AND lvd.isFinalized IS TRUE "
 				+ " AND lvd.area.areaId =(SELECT lvd1.area.areaId from LastVisitData lvd1 where lvd1.lastVisitDataId = :lastVisitId)"
 				+ " GROUP BY lvd.area.areaId")
 		public List<Object[]> findAllTimePeriodIdForAFacilityOfUhc(
@@ -257,6 +279,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT lastVisitData, score, xForm, formScore,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
 				+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore "
 				+" WHERE lastVisitData.isLive IS TRUE " 
+				+" AND lastVisitData.isFinalized IS TRUE "
 				+" AND lastVisitData.lastVisitDataId = score.lastVisitData.lastVisitDataId "
 				+" AND lastVisitData.xForm.formId = xForm.formId "
 				+ "AND formScore.formXpathScoreId =:sectorId"
@@ -270,6 +293,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT lastVisitData, score, xForm, formScore,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
 				+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore,Area area "
 				+" WHERE lastVisitData.isLive IS TRUE "
+				+" AND lastVisitData.isFinalized IS TRUE "
 				+ " AND area.parentAreaId=:areaId " 
 				+ "AND lastVisitData.area.parentAreaId =area.areaId "
 				+" AND score.lastVisitData.lastVisitDataId = lastVisitData.lastVisitDataId "
@@ -288,6 +312,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT lastVisitData, score, xForm, formScore,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
 				+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore "
 				+" WHERE lastVisitData.isLive IS TRUE "
+				+" AND lastVisitData.isFinalized IS TRUE "
 				+ "AND lastVisitData.area.parentAreaId=:areaId " 
 				+" AND score.lastVisitData.lastVisitDataId = lastVisitData.lastVisitDataId "
 				+" AND lastVisitData.xForm.formId = xForm.formId "
@@ -304,6 +329,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MAX(lvd.timPeriod.timePeriodId)-1,MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE"
+				+" AND lvd.isFinalized IS TRUE "
 				+ " AND lvd.area.parentAreaId = :areaId"
 				+ " AND lvd.area.aspirational = true"
 				+"  AND lvd.xForm.xform_meta_id = :formMetaId "
@@ -314,6 +340,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd ,Area ar"
 				+ " WHERE lvd.isLive IS TRUE"
+				+" AND lvd.isFinalized IS TRUE "
 				+ " AND ar.parentAreaId=:areaId"
 				+ " AND lvd.area.parentAreaId = ar.areaId"
 				+"  AND lvd.xForm.xform_meta_id = :formMetaId "
@@ -325,6 +352,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MAX(lvd.timPeriod.timePeriodId)-1,MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd ,Area ar"
 				+ " WHERE lvd.isLive IS TRUE"
+				+" AND lvd.isFinalized IS TRUE "
 				+ " AND lvd.area.aspirational = true"
 				+ " AND ar.parentAreaId=:areaId"
 				+ " AND lvd.area.parentAreaId = ar.areaId"
@@ -336,6 +364,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Override
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd "
+				
 				+ " WHERE lvd.isLive IS TRUE "
 				+ " AND lvd.area.aspirational = true"
 				+	" AND lvd.xForm.xform_meta_id = :formMetaId "
@@ -348,6 +377,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MAX(lvd.timPeriod.timePeriodId)-1,MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE "
+				
 				+" AND lvd.area.aspirational = true"
 				+	" AND lvd.xForm.xform_meta_id = :formMetaId "
 				+ " AND lvd.xForm.state.areaId = :stateId"
@@ -359,6 +389,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE"
+				
 				+" AND lvd.area.aspirational = true"
 				+ " AND lvd.area.areaId =(SELECT lvd1.area.areaId from LastVisitData lvd1 where lvd1.lastVisitDataId = :lastVisitId)"
 				+ " GROUP BY lvd.area.areaId")
@@ -368,6 +399,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT MAX(lvd.timPeriod.timePeriodId),MAX(lvd.timPeriod.timePeriodId)-1,MIN(lvd.timPeriod.timePeriodId)"
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE"
+				
 				+" AND lvd.area.aspirational = true"
 				+ " AND lvd.area.areaId =(SELECT lvd1.area.areaId from LastVisitData lvd1 where lvd1.lastVisitDataId = :lastVisitId)"
 				+ " GROUP BY lvd.area.areaId")
@@ -378,6 +410,7 @@ public interface SpringDataLastVisitDataRepository extends
 		@Query("SELECT lastVisitData, score, xForm, formScore,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
 				+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore "
 				+" WHERE lastVisitData.isLive IS TRUE " 
+				
 				+" AND lastVisitData.lastVisitDataId = score.lastVisitData.lastVisitDataId "
 				+" AND lastVisitData.xForm.formId = xForm.formId "
 				+ "AND formScore.formXpathScoreId =:sectorId"
@@ -418,8 +451,20 @@ public interface SpringDataLastVisitDataRepository extends
 				+ " FROM LastVisitData lvd "
 				+ " WHERE lvd.isLive IS TRUE "
 				+	" AND lvd.xForm.xform_meta_id = :formMetaId "
-				
+				+ "and lvd.isFinalized is true "
 				+ " ORDER BY lvd.timPeriod.timePeriodId Asc"
 				)
 		List<LastVisitData> findByIsLiveTrueAndXFormMetaIdOrderByTimPeriodTimePeriodIdAsc(@Param("formMetaId")	int formMetaId);
+		
+		@Override
+		@Query("SELECT lvd "
+				+ " FROM LastVisitData lvd "
+				+ " WHERE lvd.isLive IS TRUE "
+				+	" AND lvd.xForm.xform_meta_id = :formMetaId "
+				+ " AND lvd.area.areaCode = :areaCode"
+				+ " and lvd.isFinalized is true "
+				+ " ORDER BY lvd.timPeriod.timePeriodId Asc"
+				)
+		List<LastVisitData> findByAreaAreaCodeAndIsLiveTrueAndXFormMetaIdIsisFinalizedTrueOrderByTimPeriodTimePeriodIdAsc(@Param("areaCode") String areaCode,
+				@Param("formMetaId")	int formMetaId);
 }

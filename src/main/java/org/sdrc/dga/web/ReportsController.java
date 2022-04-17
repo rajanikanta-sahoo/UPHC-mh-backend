@@ -234,5 +234,17 @@ public class ReportsController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
-
+	
+	
+	@PreAuthorize("hasAuthority('report,View')")
+	@GetMapping("getRawDataReportFile")
+	@ResponseBody
+	Map<String, String> getRawDataReportFile(@RequestParam("facilityName") String facilityName,@RequestParam("programId") String programId,
+			@RequestParam("timePeriodId") int timePeriodId, @RequestParam("stateId") String stateId) throws Exception {
+		String fileName = rawDataReportService.getRawDataReport(programId, facilityName, timePeriodId, stateId);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("File", fileName);
+		return map;
+	}
+	
 }

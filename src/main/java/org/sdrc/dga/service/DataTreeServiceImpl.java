@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.sdrc.dga.domain.Area;
 import org.sdrc.dga.domain.FacilityScore;
@@ -52,6 +53,8 @@ public class DataTreeServiceImpl implements DataTreeService {
 				.findByFormXpathScoreId(sectorId);
 
 		List<BubbleDataModel> bubbleDataModels = new ArrayList<BubbleDataModel>();
+		
+		Map<Integer, Area> areaMap = areaRepository.findAll().parallelStream().collect(Collectors.toMap(Area :: getAreaId, a->a));
 
 		Integer UserAreaId = ((CollectUserModel) stateManager
 				.getValue(Constants.USER_PRINCIPAL))
@@ -80,7 +83,7 @@ public class DataTreeServiceImpl implements DataTreeService {
 			// if request data is for formId=44 i.e. DH
 			if (formXpathScoreMapping.getForm().getAreaLevel().getAreaLevelId() ==Constants.DH_LEVEL) {
 				
-				for (FacilityScore facilityScore : facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodId(formXpathScoreMapping,Arrays.asList(UserAreaId),timeperiodId) ) {
+				for (FacilityScore facilityScore : facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodIdAndLastVisitDataIsFinalizedTrue(formXpathScoreMapping,Arrays.asList(UserAreaId),timeperiodId) ) {
 					
 					if (facilityScore.getLastVisitData().isLive()
 							&& facilityScore.getLastVisitData().getArea()
@@ -142,7 +145,7 @@ public class DataTreeServiceImpl implements DataTreeService {
 
 				List<Integer> parentIds = areaRepository
 						.findAreaIdByParentAreaId(UserAreaId);
-				for (FacilityScore facilityScore :facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodId(formXpathScoreMapping,parentIds,timeperiodId)) {
+				for (FacilityScore facilityScore :facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodIdAndLastVisitDataIsFinalizedTrue(formXpathScoreMapping,parentIds,timeperiodId)) {
 					
 					if (facilityScore.getLastVisitData().isLive()
 							&& parentIds.contains(facilityScore
@@ -208,14 +211,14 @@ public class DataTreeServiceImpl implements DataTreeService {
 			Map<Integer,Area> parentAreaMap=new HashMap<Integer, Area>();
 			for(Area area:areas)
 			{
-				if(area.getAreaLevel().getAreaLevelId()==4||area.getAreaLevel().getAreaLevelId()==5)
+				if(area.getAreaLevel().getAreaLevelId()==4 || area.getAreaLevel().getAreaLevelId()==5 || area.getAreaLevel().getAreaLevelId()==6 || area.getAreaLevel().getAreaLevelId()==7)
 				{
 					parentAreaMap.put(area.getAreaId(), area);
 					
 				}
 			}
 			
-			for (FacilityScore facilityScore : facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataTimPeriodTimePeriodId(formXpathScoreMapping,timeperiodId)) {
+			for (FacilityScore facilityScore : facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataTimPeriodTimePeriodIdAndLastVisitDataIsFinalizedTrue(formXpathScoreMapping,timeperiodId)) {
 				if (facilityScore.getLastVisitData().isLive()) {
 					BubbleDataModel bubbleDataModel = new BubbleDataModel();
 
@@ -274,12 +277,12 @@ public class DataTreeServiceImpl implements DataTreeService {
 //								.getArea().getParentAreaId()).getParentAreaId()).getAreaId();
 //						System.out.println("dId->"+i);
 						
-						if(parentAreaMap.get(facilityScore.getLastVisitData()
-								.getArea().getParentAreaId()).getParentAreaId()!=2) {
-						bubbleDataModel.setDistrictName(parentAreaMap.get(parentAreaMap.get(facilityScore.getLastVisitData()
-								.getArea().getParentAreaId()).getParentAreaId()).getAreaName());
-						bubbleDataModel.setDistrictId(parentAreaMap.get(parentAreaMap.get(facilityScore.getLastVisitData()
-								.getArea().getParentAreaId()).getParentAreaId()).getAreaId());
+						if(parentAreaMap.get(areaMap.get( facilityScore.getLastVisitData()
+								.getArea().getParentAreaId()).getParentAreaId()).getParentAreaId()!=2) {
+						bubbleDataModel.setDistrictName(parentAreaMap.get(parentAreaMap.get(areaMap.get( facilityScore.getLastVisitData()
+								.getArea().getParentAreaId()).getParentAreaId()).getParentAreaId()).getAreaName());
+						bubbleDataModel.setDistrictId(parentAreaMap.get(parentAreaMap.get(areaMap.get( facilityScore.getLastVisitData()
+								.getArea().getParentAreaId()).getParentAreaId()).getParentAreaId()).getAreaId());
 						}
 					}
 					bubbleDataModels.add(bubbleDataModel);
@@ -297,7 +300,7 @@ public class DataTreeServiceImpl implements DataTreeService {
 			Map<Integer,Area> parentAreaMap=new HashMap<Integer, Area>();
 			for(Area area:areas)
 			{
-				if(area.getAreaLevel().getAreaLevelId()==4||area.getAreaLevel().getAreaLevelId()==5)
+				if(area.getAreaLevel().getAreaLevelId()==4||area.getAreaLevel().getAreaLevelId()==5||area.getAreaLevel().getAreaLevelId()==6||area.getAreaLevel().getAreaLevelId()==7)
 				{
 					parentAreaMap.put(area.getAreaId(), area);
 					
@@ -305,9 +308,10 @@ public class DataTreeServiceImpl implements DataTreeService {
 			}
 			
 			// if DH TYPE
-			if(formXpathScoreMapping.getForm().getAreaLevel().getAreaLevelId() ==Constants.DH_LEVEL)
+//			if(formXpathScoreMapping.getForm().getAreaLevel().getAreaLevelId() ==Constants.DH_LEVEL)
+				if(formXpathScoreMapping.getForm().getAreaLevel().getAreaLevelId() ==11)
 					{
-			for (FacilityScore facilityScore :  facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodId(formXpathScoreMapping,Arrays.asList(areaId),timeperiodId)) {
+			for (FacilityScore facilityScore :  facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodIdAndLastVisitDataIsFinalizedTrue(formXpathScoreMapping,Arrays.asList(areaId),timeperiodId)) {
 				if (facilityScore.getLastVisitData().isLive() && facilityScore.getLastVisitData().getArea().getParentAreaId()==areaId)
 				{
 					BubbleDataModel bubbleDataModel = new BubbleDataModel();
@@ -350,10 +354,10 @@ public class DataTreeServiceImpl implements DataTreeService {
 					bubbleDataModel.setSize(bubbleRadius);
 					//setting district name of the DH
 
-						bubbleDataModel.setDistrictName(parentAreaMap.get(facilityScore.getLastVisitData()
-								.getArea().getParentAreaId()).getAreaName());
-						bubbleDataModel.setDistrictId(parentAreaMap.get(facilityScore.getLastVisitData()
-								.getArea().getParentAreaId()).getAreaId());
+						bubbleDataModel.setDistrictName(parentAreaMap.get(areaMap.get( facilityScore.getLastVisitData()
+								.getArea().getParentAreaId()).getParentAreaId()).getAreaName());
+						bubbleDataModel.setDistrictId(parentAreaMap.get(areaMap.get( facilityScore.getLastVisitData()
+								.getArea().getParentAreaId()).getParentAreaId()).getAreaId());
 
 					bubbleDataModels.add(bubbleDataModel);
 
@@ -367,10 +371,10 @@ public class DataTreeServiceImpl implements DataTreeService {
 			else
 			{
 				List<Integer> parentIds = areaRepository
-						.findAreaIdByParentAreaId(areaId);
-				for (FacilityScore facilityScore :facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodId(formXpathScoreMapping,parentIds,timeperiodId)) {
+						.findAreaIdByParentAreaId2(areaId);
+				for (FacilityScore facilityScore :facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodIdAndLastVisitDataIsFinalizedTrue(formXpathScoreMapping,parentIds,timeperiodId)) {
 					if (facilityScore.getLastVisitData().isLive() && parentAreaMap.get(parentAreaMap.get(facilityScore.getLastVisitData()
-							.getArea().getParentAreaId()).getParentAreaId()).getAreaId()==areaId)
+							.getArea().getParentAreaId()).getParentAreaId()).getParentAreaId()==areaId)
 					{
 						BubbleDataModel bubbleDataModel = new BubbleDataModel();
 
@@ -436,7 +440,7 @@ public class DataTreeServiceImpl implements DataTreeService {
 	public Map<String, Object> fetchTreeData(int stateId,int timePeriodId,int programId) {
 		Map<String, Object> resultMap = new HashMap<>();
 		List<FormXpathScoreMapping> formXpathScoreMappings = formXpathScoreMappingRepository
-				.findByParentXpathIdAndFormStateAreaIdAndFormTimePeriodTimePeriodIdAndFormProgramXFormMappingProgramProgramIdOrderByFormAreaLevelAreaLevelId(-1,stateId,timePeriodId,programId);
+				.findByParentXpathIdAndFormStateAreaIdAndFormTimePeriodTimePeriodIdAndFormProgramXFormMappingProgramProgramId(-1,stateId,timePeriodId,programId);
 		List<FormXpathScoreMapping> childFormXpathScoreMappings = formXpathScoreMappingRepository
 				.findByFormStateAreaIdAndFormTimePeriodTimePeriodId(stateId,timePeriodId);
 		resultMap.put("name", "Facility Level");
@@ -446,7 +450,7 @@ public class DataTreeServiceImpl implements DataTreeService {
 			Map<String, Object> indMap = new HashMap<>();
 			indMap.put(
 					"name",
-					formXpathScoreMapping.getLabel().split("Total score for")[1]);
+					formXpathScoreMapping.getLabel().split("Overall Maximum score For")[1]);
 			indMap.put("Id", formXpathScoreMapping.getFormXpathScoreId());
 			List<Map<String, Object>> childList = new ArrayList<>();
 

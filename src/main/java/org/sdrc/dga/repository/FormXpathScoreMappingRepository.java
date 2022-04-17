@@ -47,6 +47,9 @@ public interface FormXpathScoreMappingRepository {
 	public List<FormXpathScoreMapping> findByParentXpathIdAndFormStateAreaIdAndFormTimePeriodTimePeriodIdAndFormProgramXFormMappingProgramProgramIdOrderByFormAreaLevelAreaLevelId(
 			int i, int stateId, int timePeriodId, int programId);
 	
+	public List<FormXpathScoreMapping> findByParentXpathIdAndFormStateAreaIdAndFormTimePeriodTimePeriodIdAndFormProgramXFormMappingProgramProgramId(
+			int i, int stateId, int timePeriodId, int programId);
+	
 	public List<Integer> getFormXpathScoreId(Integer metaId,List<Integer> timeperiods);
 	
 	public List<Object[]> getFormTypes();

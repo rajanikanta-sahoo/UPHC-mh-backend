@@ -6,6 +6,7 @@ public class FipDistrict {
 
 	private String areaName;
 	private int areaId;
+	private String areaCode;
 	private List<FipFacility> facilites;
 	public String getAreaName() {
 		return areaName;
@@ -25,4 +26,11 @@ public class FipDistrict {
 	public void setFacilites(List<FipFacility> facilites) {
 		this.facilites = facilites;
 	}
+	public String getAreaCode() {
+		return areaCode;
+	}
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
+	}
+	
 }

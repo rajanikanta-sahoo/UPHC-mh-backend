@@ -95,6 +95,9 @@ public interface LastVisitDataRepository {
 
 	List<LastVisitData> findByAreaAreaCodeAndIsLiveTrueAndXFormMetaIdOrderByTimPeriodTimePeriodIdAsc(String areaCode,
 			int formMetaId);
+	
+	List<LastVisitData> findByAreaAreaCodeAndIsLiveTrueAndXFormMetaIdIsisFinalizedTrueOrderByTimPeriodTimePeriodIdAsc(String areaCode,
+			int formMetaId);
 
 	LastVisitData findByxFormFormIdAndInstanceIdAndIsLiveTrue(Integer formId, String instanceId);
 	

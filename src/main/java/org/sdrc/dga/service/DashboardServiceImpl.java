@@ -241,7 +241,6 @@ public class DashboardServiceImpl implements DashboardService {
 			switch (xform.getAreaLevel().getAreaLevelId()) {
 
 			case Constants.CHC_LEVEL:
-			case Constants.UPHC_LEVEL:// CHC
 				if (dataValue >= 80) {
 					mapDataModel.setIcon("./assets/images/pushpins/CHC_green.png");
 				} else if (dataValue >= 60 && dataValue < 80) {
@@ -495,7 +494,8 @@ public class DashboardServiceImpl implements DashboardService {
 			}
 			Collections.reverse(maxMinTime);
 		}
-
+		if(maxMinTime.contains(0))
+			maxMinTime.remove(0);
 		List<List<SpiderDataModel>> spiderDataModelsLists = new ArrayList<List<SpiderDataModel>>();
 		SpiderDataCollection spiderDataCollection = new SpiderDataCollection();
 		List<Map<String, String>> gridData = new ArrayList<Map<String, String>>();
@@ -636,14 +636,17 @@ public class DashboardServiceImpl implements DashboardService {
 
 		// Getting the parent Sectors
 		for (FormXpathScoreMapping formXpathScoreMapping : formXpathScoreMappings) {
+			if(formXpathScoreMapping.getForm().getFormId()!=10) {
 			FormXpathScoreMappingModel formXpathScoreMappingModel = new FormXpathScoreMappingModel();
 			formXpathScoreMappingModel.setFormXpathScoreId(formXpathScoreMapping.getFormXpathScoreId());
 			// Slicing the name as DB Consist the name as Total SCore OF DH for every Sector
-			formXpathScoreMappingModel.setLabel(formXpathScoreMapping.getLabel().split("Total score for")[1]);
+//			formXpathScoreMappingModel.setLabel(formXpathScoreMapping.getLabel().split("Overall Maximum score for")[0]);
+			formXpathScoreMappingModel.setLabel(getShortName(formXpathScoreMapping.getLabel()));
 			formXpathScoreMappingModel.setFormId(formXpathScoreMapping.getForm().getFormId());
 			formXpathScoreMappingModel.setMarkerClass(formXpathScoreMapping.getForm().getMarkerClass());
 			formXpathScoreMappingModel.setForm_meta_id(formXpathScoreMapping.getForm().getXform_meta_id());
 			formXpathScoreMappingModels.add(formXpathScoreMappingModel);
+			}
 		}
 		return formXpathScoreMappingModels;
 	}
@@ -750,7 +753,7 @@ public class DashboardServiceImpl implements DashboardService {
 		}
 		// getting sector Name
 		FormXpathScoreMapping fxm = formXpathScoreMappingRepository.findByFormXpathScoreId(parentXpathId);
-		sectorName = fxm.getLabel().split("Total score for")[1];
+		sectorName = fxm.getLabel().split("Overall Maximum score For")[1];
 
 		// If pushpin is clicked the we will set FaciliTy name in area
 		if (lastVisitDataId != 0) {
@@ -1081,7 +1084,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 		String area, sectorName;
 		FormXpathScoreMapping fxm = formXpathScoreMappingRepository.findByFormXpathScoreId(parentXpathId);
-		sectorName = fxm.getLabel().split("Total score for")[1];
+		sectorName = fxm.getLabel().split("Overall Maximum score For")[1];
 		if (lastVisitDataId != 0) {
 			area = lastVisitDataRepository.findByLastVisitDataIdAndIsLiveTrue(lastVisitDataId).getArea().getAreaName();
 		} else if (areaId != 0) {
@@ -1539,7 +1542,26 @@ public class DashboardServiceImpl implements DashboardService {
 		return model;
 	}
 
-	
+	String getShortName(String facility) {
+		String name="";
+		switch (facility) {
+		case "Overall Maximum score For UPHC":
+			name = "UPHC";
+			break;
+		case "Overall Maximum score For Maternity Home":
+			name = "Maternity Home";
+			break;
+		case "Overall Maximum score For Dispensary":
+			name = "Dispensary";
+			break;
+		case "Overall Maximum score For health Post":
+			name = "Health Post";
+			break;
+
+		}
+		
+		return name;
+	}
 //I am here
 
 }

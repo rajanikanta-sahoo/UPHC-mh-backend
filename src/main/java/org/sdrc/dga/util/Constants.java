@@ -80,11 +80,11 @@ public class Constants {
 		public static final int PHC_ID=3;
 		public static final int STATE_ID=2;
 		
-		public static final int DH_LEVEL=6;
-		public static final int CHC_LEVEL=7;
-		public static final int PHC_LEVEL=8;
-		public static final int HSC_LEVEL=9;
-		public static final int UPHC_LEVEL=10;
+		public static final int DH_LEVEL=10;
+		public static final int CHC_LEVEL=8;
+		public static final int PHC_LEVEL=9;
+		public static final int HSC_LEVEL=7;
+		public static final int UPHC_LEVEL=8;
 		public static final int UHC_LEVEL=3;
 		
 		

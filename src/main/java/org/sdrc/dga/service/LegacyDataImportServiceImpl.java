@@ -26,6 +26,7 @@ import org.sdrc.dga.domain.RawFormXapths;
 import org.sdrc.dga.domain.XForm;
 import org.sdrc.dga.repository.AreaRepository;
 import org.sdrc.dga.repository.ChoiceDetailsRepository;
+import org.sdrc.dga.repository.CollectUserRepository;
 import org.sdrc.dga.repository.FacilityScoreRepository;
 import org.sdrc.dga.repository.FormXpathScoreMappingRepository;
 import org.sdrc.dga.repository.LastVisitDataRepository;
@@ -66,6 +67,9 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private CollectUserRepository collectUserRepository;
 
 //	@Autowired
 //	private LegacyDataException legacyDataException;
@@ -93,11 +97,12 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 //		Map<String, FormXpathScoreMapping> formXpathMap = formXpathScoreMappingRepository.findByFormFormId(formId)
 //				.stream().collect(Collectors.toMap(FormXpathScoreMapping::getxPath, a -> a));
 
+
 		XForm xForm = xFormRepository.findByFormId(formId);
 
 		// chenge where areaCode is added
 		Map<String, Area> areaMap = areaRepository.findAll().stream()
-				.collect(Collectors.toMap(Area::getAreaName, a -> a));
+				.collect(Collectors.toMap(Area::getAreaCode, a -> a));
 
 		Map<String, String> choiceMap = new HashMap<>();
 		choiceDetailsRepository.findByFormFormId(formId).stream().filter(a -> !a.getChoiceValue().equals("0"))
@@ -140,32 +145,48 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 				int count = 0;
 				xssfRow = sheet.getRow(row);
 				cellIterator = xssfRow.cellIterator();
+				System.out.println(row);
 				// here we are creating LastVisitData and setting all values
 				xssfRow = sheet.getRow(row);
+//				System.out.println("areaId--------------->"+xssfRow
+//						.getCell(xPathMap2.get(xForm.getAreaXPath().subSequence(1, xForm.getAreaXPath().length())))
+//						.getStringCellValue());
 				areaId = areaMap.get(xssfRow
 						.getCell(xPathMap2.get(xForm.getAreaXPath().subSequence(1, xForm.getAreaXPath().length())))
 						.getStringCellValue()).getAreaId();
 				lList.contains(areaId);
 
-				if (lList.contains(areaId)
-						&& !lvdList.contains(xssfRow.getCell(xssfRow.getLastCellNum() - 1).getStringCellValue())) {
+//				if (!lList.contains(areaId)
+//						&& !lvdList.contains(xssfRow.getCell(xssfRow.getLastCellNum() - 1).getStringCellValue())) {
+				if (!lList.contains(areaId)) {
 					LastVisitData lvd = new LastVisitData();
 					lvd.setArea(areaMap.get(xssfRow
 							.getCell(xPathMap2.get(xForm.getAreaXPath().subSequence(1, xForm.getAreaXPath().length())))
 							.getStringCellValue()));
+					lList.add(areaMap.get(xssfRow
+							.getCell(xPathMap2.get(xForm.getAreaXPath().subSequence(1, xForm.getAreaXPath().length())))
+							.getStringCellValue()).getAreaId());
 					lvd.setDateOfVisit(sqlDate);
 					lvd.setInstanceId(xssfRow.getCell(xssfRow.getLastCellNum() - 1).getStringCellValue());
 					lvd.setFinalized(true);
 					lvd.setLive(true);
+					if((xssfRow.getCell(xPathMap2.get(
+							xForm.getLocationXPath().subSequence(1, xForm.getLocationXPath().length()) ))
+							.toString().split("-")).length>0) {
 					lvd.setLatitude(xssfRow.getCell(xPathMap2.get(
-							xForm.getLocationXPath().subSequence(1, xForm.getLocationXPath().length()) + "/Latitude"))
-							.getNumericCellValue() + "");
+							xForm.getLocationXPath().subSequence(1, xForm.getLocationXPath().length()) ))
+							.toString().split("-")[0]);
 					lvd.setLongitude(xssfRow.getCell(xPathMap2.get(
-							xForm.getLocationXPath().subSequence(1, xForm.getLocationXPath().length()) + "/Longitude"))
-							.getNumericCellValue() + "");
+							xForm.getLocationXPath().subSequence(1, xForm.getLocationXPath().length()) ))
+							.toString().split("-")[1]);
+					}else {
+						lvd.setLatitude(null);
+						lvd.setLongitude(null);
+					}
 					lvd.setTimPeriod(xForm.getTimePeriod());
-					CollectUser collectUser = new CollectUser();
-					collectUser.setUserId(1);
+					CollectUser collectUser = collectUserRepository.findByUsername("system");
+//					CollectUser collectUser = collectUserRepository.findByUsername("nibedita");
+//					collectUser.setUserId(1);
 					lvd.setUser(collectUser);
 					lvd.setxForm(xForm);
 					lvd.setSubmissionFileName("LegacyData Insert");
@@ -180,7 +201,9 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 //						System.out.println("xpath-> " + xPath);
 						RawDataScore rwScore = new RawDataScore();
 						FacilityScore fScore = new FacilityScore();
-
+//						if(xPath.toString().equals("calc_hf"))
+//							System.out.println("hi");
+//						System.out.println(count);
 //					int type = cell.getCellType();
 						if (!cell.toString().equals("null")) {
 							if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(cell))
@@ -192,6 +215,8 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 								value = cell.getStringCellValue();
 							else if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC)
 								value = cell.getNumericCellValue() + "";
+							else if(cell.getCellType() == Cell.CELL_TYPE_FORMULA)
+								value = cell.getNumericCellValue() + "";
 						} else {
 							value = "";
 						}
@@ -199,8 +224,9 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 
 						if (rawFormXpathMap.containsKey("/" + xPath.toString())) {
 							rwScore.setLastVisitData(lvd);
-							rwScore.setScore(value);
 							rwScore.setRawFormXapths(rawFormXpathMap.get("/" + xPath.toString()));
+							value = value.replace("\n", ",");
+							rwScore.setScore(value);
 //							System.out.println("rwScore->" + xPath + ", score->" + value);
 							rawDataScoreRepository.save(rwScore);
 						}
@@ -208,6 +234,9 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 							fScore.setFormXpathScoreMapping(formXpathMap.get(xPath.toString()));
 							fScore.setLastVisitData(lvd);
 							fScore.setMaxScore(formXpathMap.get(xPath.toString()).getMaxScore());
+							
+//							if(xPath.toString().equals("calc_hf"))
+//								System.out.println("hi");
 							fScore.setScore(checkNumberType(value) ? Double.parseDouble(value)
 									: value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("no")
 											? value.equalsIgnoreCase("yes") ? Double.parseDouble("1")

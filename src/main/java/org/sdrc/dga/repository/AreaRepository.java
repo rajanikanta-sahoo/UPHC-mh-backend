@@ -14,6 +14,8 @@ public interface AreaRepository {
    
 	List<Integer> findAreaIdByParentAreaId(Integer paremtAreaID);
 	
+	List<Integer> findAreaIdByParentAreaId2(Integer paremtAreaID);
+	
 	Area findByAreaId(Integer areaId);
 
 	List<Area> findAll();

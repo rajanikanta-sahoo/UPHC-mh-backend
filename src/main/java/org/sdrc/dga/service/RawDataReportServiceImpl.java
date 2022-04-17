@@ -222,7 +222,7 @@ public class RawDataReportServiceImpl implements RawDataReportService {
 		Map<String, String> areaNameMap = areaRepository.findAll().stream()
 				.collect(Collectors.toMap(Area::getAreaCode, a -> a.getAreaName()));
 
-		if (true) {
+		if (lvds.size()>0) {
 			List<TimePeriod> timePeriods = null;
 			timePeriods = xFormRepository.findDistinctTimePeriodBySateIdAndFormMetaId(formMetaId,
 					Integer.parseInt(stateId));
@@ -319,6 +319,7 @@ public class RawDataReportServiceImpl implements RawDataReportService {
 
 				LastVisitData lvd = lvds.get(tpIndex);
 
+				
 				Map<String, RawDataScore> scoresMap = lvd.getRawDataScore().stream()
 						.collect(Collectors.toMap(a -> a.getRawFormXapths().getXpath(), a -> a));
 
@@ -379,11 +380,14 @@ public class RawDataReportServiceImpl implements RawDataReportService {
 		case "dispensary":
 			id = 2;
 			break;
-		case "hp":
+		case "health post":
 			id = 3;
 			break;
-		case "mh":
+		case "maternity home":
 			id = 4;
+			break;
+		case "covid":
+			id = 5;
 			break;
 
 		}

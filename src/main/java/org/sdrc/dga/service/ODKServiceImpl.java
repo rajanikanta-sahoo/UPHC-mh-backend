@@ -1295,8 +1295,8 @@ public class ODKServiceImpl implements ODKService {
 
 			lastVisitDataMap.put(lastVisitDatas.getInstanceId(), lastVisitDatas);
 
-			List<LastVisitData> availableData = lastVisitDataRepository.findByAreaAndTimPeriodAndXForm(
-					lastVisitDatas.getArea(), lastVisitDatas.getTimPeriod(), lastVisitDatas.getxForm());
+//			List<LastVisitData> availableData = lastVisitDataRepository.findByAreaAndTimPeriodAndXForm(
+//					lastVisitDatas.getArea(), lastVisitDatas.getTimPeriod(), lastVisitDatas.getxForm());
 			XForm xform = xFormRepository.findByFormId(lastVisitDatas.getxForm().getFormId());
 
 			if (true) {
@@ -1357,8 +1357,8 @@ public class ODKServiceImpl implements ODKService {
 //						String instance_id = nodeIdList.item(node_no).getFirstChild().getNodeValue().trim();
 						String instance_id = lastVisitDatas.getInstanceId();
 
-						if (!lastVisitDataMap.containsKey(instance_id)
-								|| lastVisitDataMap.get(instance_id).getFacilityScores() == null
+						if (
+								 lastVisitDataMap.get(instance_id).getFacilityScores() == null
 								|| lastVisitDataMap.get(instance_id).getFacilityScores().size() < 1
 								|| lastVisitDataMap.get(instance_id).getFacilityScores().isEmpty()) {
 							String link_formID = generateFormID(xform.getxFormId(), formRooTitle, instance_id);
@@ -1483,9 +1483,13 @@ public class ODKServiceImpl implements ODKService {
 							}
 							lastVisitDataMap.put(instance_id, lvd);
 //						make lastvisitData as finalized
-							lvd.setFinalized(true);
-							lastVisitDataRepository.save(lvd);
+							
+							
 						}
+						
+						System.out.println("finalize Id->"+lastVisitDatas.getLastVisitDataId());
+						lastVisitDatas.setFinalized(true);
+						lastVisitDataRepository.save(lastVisitDatas);
 					}
 
 				}

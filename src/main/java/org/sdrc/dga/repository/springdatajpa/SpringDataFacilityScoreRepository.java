@@ -57,11 +57,12 @@ public interface SpringDataFacilityScoreRepository extends
 	
 	@Override
 	@Query("SELECT fxm.label,(AVG(fc.score / fc.maxScore)*100),fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId FROM "
-			+ "FacilityScore fc JOIN fc.formXpathScoreMapping fxm,Area area "
+			+ "FacilityScore fc JOIN fc.formXpathScoreMapping fxm,Area ar,Area area2 "
 			+ "WHERE  fxm.parentXpathId=:parenXpathId "
 			+ "AND fc.formXpathScoreMapping.formXpathScoreId = fxm.formXpathScoreId "
-			+ "AND area.parentAreaId=:areaId "
-			+ "AND fc.lastVisitData.area.parentAreaId=area.areaId "
+			+ " AND area2.parentAreaId = ar.areaId"
+			+ " AND ar.parentAreaId=:areaId "
+			+ "AND fc.lastVisitData.area.parentAreaId=area2.areaId "
 			+ "AND fc.lastVisitData.isLive = true  AND fxm.form.xform_meta_id = :formMetaId "
 			+ " AND fc.lastVisitData.timPeriod.timePeriodId = :timeperiodId"
 			+ " GROUP BY fxm.label ,fxm.maxScore,fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId "
@@ -112,11 +113,12 @@ public interface SpringDataFacilityScoreRepository extends
 
 	@Override
 	@Query("SELECT fxm.label,(AVG(fc.score / fc.maxScore)*100),fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId FROM "
-			+ "FacilityScore fc JOIN fc.formXpathScoreMapping fxm,Area area "
+			+ "FacilityScore fc JOIN fc.formXpathScoreMapping fxm,Area area , Area area2 "
 			+ "WHERE  fxm.parentXpathId=:parenXpathId "
 			+ "AND fc.formXpathScoreMapping.formXpathScoreId = fxm.formXpathScoreId "
+			+ " AND area2.parentAreaId = area.areaId "
 			+ "AND area.parentAreaId=:areaId "
-			+ "AND fc.lastVisitData.area.parentAreaId=area.areaId "
+			+ "AND fc.lastVisitData.area.parentAreaId=area2.areaId "
 			+ "AND fc.lastVisitData.isLive = true  AND fxm.form.xform_meta_id = :formMetaId "
 			+ " AND fc.lastVisitData.timPeriod.timePeriodId = :timeperiodId"
 			+ " AND fc.lastVisitData.area.aspirational=true "

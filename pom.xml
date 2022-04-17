@@ -9,8 +9,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging> 
 
-	<name>UPHC-MH</name>
-	<description>UPHC MH Boot app</description>
+	<name>DGAIndia</name>
+<!--	<name>UPHC-MH</name> -->
+<!--	<description>UPHC MH Boot app</description> -->
+	<description>DGA National Boot app</description>
 
 
 	<developers>
@@ -294,7 +296,8 @@
 	</dependencies>
 
 	<build>
-		<finalName>uphc-mh</finalName>
+	<!-- 	<finalName>dgaindia</finalName> -->
+		<finalName>uphc-mh</finalName> 
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
