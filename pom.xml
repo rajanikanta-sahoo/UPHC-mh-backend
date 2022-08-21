@@ -296,8 +296,8 @@
 	</dependencies>
 
 	<build>
-	<!-- 	<finalName>dgaindia</finalName> -->
-		<finalName>uphc-mh</finalName> 
+	 	<finalName>dgaindia</finalName> 
+		<!--<finalName>uphc-mh</finalName> -->
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

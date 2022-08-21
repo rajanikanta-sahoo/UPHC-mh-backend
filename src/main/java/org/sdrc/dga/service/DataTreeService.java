@@ -21,7 +21,7 @@ public interface DataTreeService
 	 * @param timeperiodId 
 	 * @return
 	 */
-	List<BubbleDataModel> getBubbleChartData(Integer sectorId, int areaId, int timeperiodId);
+	List<BubbleDataModel> getBubbleChartData(Integer sectorId, int areaId, int timeperiodId,int mId, int wId);
 
 	/**
 	 * Tree data i.e. the sectors

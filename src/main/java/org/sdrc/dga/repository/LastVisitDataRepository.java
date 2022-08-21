@@ -22,6 +22,12 @@ public interface LastVisitDataRepository {
 
 	List<Object[]> getDataByFormIdAndDistrictAreaId(Integer formId,
 			Integer sectorId, Integer areaId, int timeperiodId);
+	
+	List<Object[]> getDataByFormIdAndMunicipalAreaId(Integer formId,
+			Integer sectorId, Integer areaId, int timeperiodId);
+	
+	List<Object[]> getDataByFormIdAndWordAreaId(Integer formId,
+			Integer sectorId, Integer areaId, int timeperiodId);
 
 	List <Object[]> getDataBySectorIdIdAndDistrictAreaId(Integer sectorId,
 			Integer areaId, int timeperiodId);

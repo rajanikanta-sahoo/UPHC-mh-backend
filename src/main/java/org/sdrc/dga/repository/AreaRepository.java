@@ -51,6 +51,8 @@ public interface AreaRepository {
 	
 	List<Area> findByParentAreaId(Integer paremtAreaID);
 	
+	List<Area> findByParentAreaIdOrderByAreaNameAsc(Integer paremtAreaID);
+	
 	@Query("SELECT area FROM Area area WHERE area.areaLevel = 4 And area.isLive IS true And area.parentAreaId =:stateId")
 	public List<Area> findDistrictWithStateId(@Param("stateId")Integer stateId);
 	

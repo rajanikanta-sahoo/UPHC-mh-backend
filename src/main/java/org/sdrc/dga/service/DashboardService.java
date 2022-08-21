@@ -36,8 +36,8 @@ public interface DashboardService {
 	 * @return
 	 * @throws Exception
 	 */
-	List<GoogleMapDataModel> fetchAllGoogleMapData(Integer formId, Integer sectorId, Integer areaId, int timePeriodId)
-			throws Exception;
+	List<GoogleMapDataModel> fetchAllGoogleMapData(Integer formId, Integer sectorId, Integer areaId, int timePeriodId,
+			Integer municId, Integer wordId) throws Exception;
 
 	List<ScoreModel> fetchLabelFromLastVisitData(Integer lastVisitDataId) throws Exception;
 
@@ -51,18 +51,19 @@ public interface DashboardService {
 	 * @param formId
 	 * @param lastVisitDataId
 	 * @param areaId
-	 * @param parentXpathId 
-	 * @param formMetaId 
+	 * @param parentXpathId
+	 * @param formMetaId
 	 * @return
 	 */
-	SpiderDataCollection getfetchSpiderData(Integer formId, Integer lastVisitDataId, Integer areaId, Integer parentXpathId, int formMetaId);
+	SpiderDataCollection getfetchSpiderData(Integer formId, Integer lastVisitDataId, Integer areaId,
+			Integer parentXpathId, int formMetaId, Integer municId, Integer wordId);
 
 	/**
 	 * This will return the parent sectors i.e. CHC,PHC,DH
 	 * 
 	 * @return
 	 */
-	List<FormXpathScoreMappingModel> getParentSectors(int timeperiodId,int stateId,int programId);
+	List<FormXpathScoreMappingModel> getParentSectors(int timeperiodId, int stateId, int programId);
 
 	/**
 	 * This will give the Sectors under a Parent Sectors
@@ -78,6 +79,8 @@ public interface DashboardService {
 	 */
 	List<AreaModel> getAllDistricts(int stateId);
 
+	List<AreaModel> getAllAreaByParentId(int id);
+
 	/**
 	 * This method will Generate PDF on dashboard
 	 * 
@@ -88,13 +91,13 @@ public interface DashboardService {
 	 * @param areaId
 	 * @param response
 	 * @param noOfFacilities
-	 * @param formMetaId 
+	 * @param formMetaId
 	 * @return
 	 * @throws Exception
 	 */
 	String exportToPdf(String spiderChart, String columnChart, Integer formId, Integer lastVisitDataId, Integer areaId,
-			HttpServletResponse response, int noOfFacilities, int timePeriodId,
-			Integer parentXpathId, int formMetaId,HttpServletRequest request) throws Exception;
+			HttpServletResponse response, int noOfFacilities, int timePeriodId, Integer parentXpathId, int formMetaId,
+			HttpServletRequest request, Integer municId, Integer wordId) throws Exception;
 
 	/**
 	 * This Module will generate Excel
@@ -106,12 +109,13 @@ public interface DashboardService {
 	 * @param areaId
 	 * @param response
 	 * @param noOfFacilities
-	 * @param formMetaId 
+	 * @param formMetaId
 	 * @return
 	 * @throws Exception
 	 */
 	String exportToExcel(String spiderChart, String columnChart, Integer formId, Integer lastVisitDataId,
-			Integer areaId, HttpServletResponse response, int noOfFacilities, int timePeriodId,Integer parentXpathId, int formMetaId,HttpServletRequest request) throws Exception;
+			Integer areaId, HttpServletResponse response, int noOfFacilities, int timePeriodId, Integer parentXpathId,
+			int formMetaId, HttpServletRequest request, Integer municId, Integer wordId) throws Exception;
 
 	/**
 	 * this method will return the facility planned for a form in an area and
@@ -123,19 +127,17 @@ public interface DashboardService {
 	 * @param timePeriodId
 	 * @return
 	 */
-	FacilityPlanningModel getPlannedFacilities(int formId, int areaId, int timePeriodId,int stateId);
+	FacilityPlanningModel getPlannedFacilities(int formId, int areaId, int timePeriodId, int stateId);
 
-	List<TimePeriodModel> getAllPlanningTimePeriod(int stateId,int programId);
+	List<TimePeriodModel> getAllPlanningTimePeriod(int stateId, int programId);
 
 	List<AreaModel> getAllState();
 
 	List<ProgramModel> getAllProgramme(int stateId);
-	
-	
+
 //	List<GoogleMapDataModel> fetchAllAspirationalGoogleMapData(Integer formId, Integer sectorId, Integer areaId, int timePeriodId)
 //			throws Exception;
 
-	
 //	SpiderDataCollection getfetchAspirationalSpiderData(Integer formId, Integer lastVisitDataId, Integer areaId, Integer parentXpathId, int formMetaId);
 //	
 //	FacilityPlanningModel getAspirationalPlannedFacilities(int formId, int areaId, int timePeriodId,int stateId);
@@ -143,25 +145,23 @@ public interface DashboardService {
 //	List<NationalGoogleMapDataModel> fetchAllAspirationalGoogleMapDataNational(Integer formMetaId)
 //			throws Exception;
 
-	
 //	SpiderDataCollection getfetchAspirationalSpiderDataNational(int formMetaId);
 //	
 //
 //	List<FormXpathScoreMappingModel> getNationalParentSectors();
 //	
 //	FacilityPlanningModel getNationalPlannedFacilities(int stateId,int areaId);
-	
+
 	/**
 	 * 
 	 * @return List<AreaModel> All Aspirational the districts
 	 */
 //	List<AreaModel> getAllAspirationalDistrict(int stateId);
-	
+
 	AreaModel getState(int stateId);
-	
+
 //	List<ProgramModel> getAllAspirationalProgramme(int stateId);
 
-	
 	/**
 	 * This method will Generate PDF on dashboard
 	 * 
@@ -172,7 +172,7 @@ public interface DashboardService {
 	 * @param areaId
 	 * @param response
 	 * @param noOfFacilities
-	 * @param formMetaId 
+	 * @param formMetaId
 	 * @return
 	 * @throws Exception
 	 */
@@ -190,7 +190,7 @@ public interface DashboardService {
 	 * @param areaId
 	 * @param response
 	 * @param noOfFacilities
-	 * @param formMetaId 
+	 * @param formMetaId
 	 * @return
 	 * @throws Exception
 	 */

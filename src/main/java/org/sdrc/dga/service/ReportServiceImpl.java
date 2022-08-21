@@ -696,21 +696,22 @@ public class ReportServiceImpl implements ReportService {
 		IndicatorFormXpathMappingModel formXpathMappingModel = new IndicatorFormXpathMappingModel();
 		formXpathMappingModel.setIndicatorFormXpathMappingId(0);
 		formXpathMappingModel.setLabel("Number of Facilities assessed");
-		formXpathMappingModel.setChcXpath("0");
-		formXpathMappingModel.setPhcXpath("0");
-		formXpathMappingModel.setDhXpath("0");
-		formXpathMappingModel.setHscXpath("0");
+		formXpathMappingModel.setDispansaryXpath("0");
+		formXpathMappingModel.setHealthPostXpath("0");
+		formXpathMappingModel.setMaternityHomeXpath("0");
+		formXpathMappingModel.setUphcXpath("0");
 		formXpathMappingModel.setType("Facility");
 		indicatorFormXpathMappingModels.add(formXpathMappingModel);
 
 		for (Object[] formXpathMapping : indicatorFormXpathMappingList) {
+			
 			formXpathMappingModel = new IndicatorFormXpathMappingModel();
 			formXpathMappingModel.setIndicatorFormXpathMappingId(Integer.parseInt(formXpathMapping[0].toString()));
 			formXpathMappingModel.setLabel(formXpathMapping[1].toString());
-			formXpathMappingModel.setChcXpath(formXpathMapping[5] == null ? "0" : (formXpathMapping[5].toString()));
-			formXpathMappingModel.setPhcXpath(formXpathMapping[6] == null ? "0" : (formXpathMapping[6].toString()));
-			formXpathMappingModel.setDhXpath(formXpathMapping[4] == null ? "0" : (formXpathMapping[4].toString()));
-			formXpathMappingModel.setHscXpath(formXpathMapping[7] == null ? "0" : (formXpathMapping[7].toString()));
+			formXpathMappingModel.setDispansaryXpath((formXpathMapping[5] == null || formXpathMapping[5].equals("-") ) ? "0" : (formXpathMapping[5].toString()));
+			formXpathMappingModel.setHealthPostXpath((formXpathMapping[6] == null || formXpathMapping[6].equals("-") ) ? "0" : (formXpathMapping[6].toString()));
+			formXpathMappingModel.setMaternityHomeXpath((formXpathMapping[4] == null || formXpathMapping[4].equals("-") ) ? "0" : (formXpathMapping[4].toString()));
+			formXpathMappingModel.setUphcXpath((formXpathMapping[7] == null || formXpathMapping[7].equals("-") ) ? "0" : (formXpathMapping[7].toString()));
 //			if(formXpathMapping[7] == null)
 //				formXpathMappingModel.setHscXpath("0");
 //			else
@@ -789,10 +790,11 @@ public class ReportServiceImpl implements ReportService {
 			if (formXpathScoreMapping.getForm().getXform_meta_id() == 1
 					|| formXpathScoreMapping.getForm().getXform_meta_id() == 2
 					|| formXpathScoreMapping.getForm().getXform_meta_id() == 3
-					|| formXpathScoreMapping.getForm().getXform_meta_id() == 5) {
+					|| formXpathScoreMapping.getForm().getXform_meta_id() == 4) {
 				formXpathScoreMappingModel.setFormXpathScoreId(formXpathScoreMapping.getFormXpathScoreId());
 				// Slicing the name as DB Consist the name as Total SCore OF DH for every Sector
-				formXpathScoreMappingModel.setLabel(formXpathScoreMapping.getLabel().split("Total score for")[1]);
+//				formXpathScoreMappingModel.setLabel(formXpathScoreMapping.getLabel().split("Overall Maximum score for")[1]);
+				formXpathScoreMappingModel.setLabel(getShortName(formXpathScoreMapping.getLabel()));
 				formXpathScoreMappingModel.setFormId(formXpathScoreMapping.getForm().getFormId());
 				formXpathScoreMappingModel.setForm_meta_id(formXpathScoreMapping.getForm().getXform_meta_id());
 				formXpathScoreMappingModels.add(formXpathScoreMappingModel);
@@ -820,16 +822,16 @@ public class ReportServiceImpl implements ReportService {
 	public Object getCrossTabTableData(CrossTabDataModel crossTabDataModel) {
 
 		List<String> xPathsIdCol = new ArrayList<String>();
-		xPathsIdCol.add(crossTabDataModel.getColChcXpath());
-		xPathsIdCol.add(crossTabDataModel.getColPhcXpath());
-		xPathsIdCol.add(crossTabDataModel.getColDhXpath());
-		xPathsIdCol.add(crossTabDataModel.getColHscXpath());
+		xPathsIdCol.add("/"+crossTabDataModel.getColDispansaryXpath());
+		xPathsIdCol.add("/"+crossTabDataModel.getColHealthPostXpath());
+		xPathsIdCol.add("/"+crossTabDataModel.getColMaternityHomeXpath());
+		xPathsIdCol.add("/"+crossTabDataModel.getColUphcXpath());
 
 		List<String> xPathsRow = new ArrayList<String>();
-		xPathsRow.add(crossTabDataModel.getRowChcXpath());
-		xPathsRow.add(crossTabDataModel.getRowPhcXpath());
-		xPathsRow.add(crossTabDataModel.getRowDhXpath());
-		xPathsRow.add(crossTabDataModel.getRowHscXpath());
+		xPathsRow.add("/"+crossTabDataModel.getRowDispansaryXpath());
+		xPathsRow.add("/"+crossTabDataModel.getRowHealthPostXpath());
+		xPathsRow.add("/"+crossTabDataModel.getRowMaternityHomeXpath());
+		xPathsRow.add("/"+crossTabDataModel.getRowUphcXpath());
 
 		CollectUserModel collectUserModel = (CollectUserModel) stateManager.getValue(Constants.USER_PRINCIPAL);
 		Integer areaLevelId = collectUserModel.getUserRoleFeaturePermissionMappings().get(0)
@@ -1388,5 +1390,29 @@ public class ReportServiceImpl implements ReportService {
 		}
 
 		return stateList;
+	}
+	
+	String getShortName(String facility) {
+		String name="";
+		switch (facility) {
+		case "Overall Maximum score For UPHC":
+			name = "UPHC";
+			break;
+		case "Overall Maximum score For Maternity Home":
+			name = "Maternity Home";
+			break;
+		case "Overall Maximum score For Dispensary":
+			name = "Dispensary";
+			break;
+		case "Overall Maximum score For Health Post":
+			name = "Health Post";
+			break;
+		case "Overall Maximum score For Covid Facility":
+			name = "Covid";
+			break;
+
+		}
+		
+		return name;
 	}
 }

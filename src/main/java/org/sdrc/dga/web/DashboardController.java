@@ -63,7 +63,7 @@ public class DashboardController {
 	@ResponseBody
 	public List<GoogleMapDataModel> fetchAllGoogleMapData(@RequestParam("formId") Integer formId,
 			@RequestParam("sector") Integer sectorId, @RequestParam("areaId") Integer areaId,
-			@RequestParam("timePeriodId") int timePeriodId) throws Exception {
+			@RequestParam("timePeriodId") int timePeriodId,@RequestParam("mId") Integer mId,@RequestParam("wId") Integer wId) throws Exception {
 
 		CollectUserModel collectUserModel = (CollectUserModel) stateManager.getValue(Constants.USER_PRINCIPAL);
 		// On load of page if the user is of district level then areaId will be set as
@@ -75,7 +75,7 @@ public class DashboardController {
 			areaId = collectUserModel.getUserRoleFeaturePermissionMappings().get(0)
 					.getRoleFeaturePermissionSchemeModel().getAreaModel().getAreaId();
 		}
-		return dashboardService.fetchAllGoogleMapData(formId, sectorId, areaId, timePeriodId);
+		return dashboardService.fetchAllGoogleMapData(formId, sectorId, areaId, timePeriodId, mId, wId);
 	}
 
 	@PreAuthorize("hasAuthority('dashboard,View')")
@@ -101,9 +101,9 @@ public class DashboardController {
 	public SpiderDataCollection fetchSpiderData(@RequestParam(value = "formId", required = false) Integer formId,
 			@RequestParam(value = "lastVisitDataId", required = false) Integer lastVisitDataId,
 			@RequestParam(value = "areaId", required = false) Integer areaId,
-			@RequestParam("parentXpathId") int parentXpathId, @RequestParam("formMetaId") int formMetaId)
+			@RequestParam("parentXpathId") int parentXpathId, @RequestParam("formMetaId") int formMetaId,@RequestParam("mId") Integer mId,@RequestParam("wId") Integer wId)
 			throws Exception {
-		return dashboardService.getfetchSpiderData(formId, lastVisitDataId, areaId, parentXpathId, formMetaId);
+		return dashboardService.getfetchSpiderData(formId, lastVisitDataId, areaId, parentXpathId, formMetaId,mId,wId);
 	}
 
 	@PreAuthorize("hasAuthority('dashboard,View')")
@@ -165,11 +165,11 @@ public class DashboardController {
 			@RequestParam(value = "lastVisitDataId", required = false) Integer lastVisitDataId,
 			@RequestParam(value = "areaId", required = false) Integer areaId,
 			@RequestParam("timePeriodId") int timePeriodId, @RequestParam("parentXpathId") int parentXpathId,
-			@RequestParam("formMetaId") int formMetaId, HttpServletResponse response, HttpServletRequest request)
+			@RequestParam("formMetaId") int formMetaId, HttpServletResponse response, HttpServletRequest request,@RequestParam("mId") Integer mId,@RequestParam("wId") Integer wId)
 			throws Exception {
 
 		String pdfPath = dashboardService.exportToPdf(svgs.get(0), svgs.get(0), formId, lastVisitDataId, areaId,
-				response, noOfFacilities, timePeriodId, parentXpathId, formMetaId, request);
+				response, noOfFacilities, timePeriodId, parentXpathId, formMetaId, request,mId,wId);
 
 		return pdfPath;
 
@@ -184,11 +184,11 @@ public class DashboardController {
 			@RequestParam(value = "lastVisitDataId", required = false) Integer lastVisitDataId,
 			@RequestParam(value = "areaId", required = false) Integer areaId,
 			@RequestParam("timePeriodId") int timePeriodId, @RequestParam("parentXpathId") int parentXpathId,
-			@RequestParam("formMetaId") int formMetaId, HttpServletResponse response, HttpServletRequest request)
+			@RequestParam("formMetaId") int formMetaId, HttpServletResponse response, HttpServletRequest request,@RequestParam("mId") Integer mId,@RequestParam("wId") Integer wId)
 			throws Exception {
 
 		String pdfPath = dashboardService.exportToExcel(svgs.get(0), svgs.get(0), formId, lastVisitDataId, areaId,
-				response, noOfFacilities, timePeriodId, parentXpathId, formMetaId, request);
+				response, noOfFacilities, timePeriodId, parentXpathId, formMetaId, request,mId,wId);
 
 		return pdfPath;
 
@@ -206,7 +206,7 @@ public class DashboardController {
 
 			fileName = name.replaceAll("%3A", ":").replaceAll("%2F", "/").replaceAll("%5C", "/").replaceAll("%2C", ",")
 					.replaceAll("\\+", " ").replaceAll("%22", "").replaceAll("%3F", "?").replaceAll("%3D", "=")
-					.replaceAll("%20", " ");
+					.replaceAll("%20", " ").replaceAll("%26", "&");
 			inputStream = new FileInputStream(fileName);
 			String headerKey = "Content-Disposition";
 			String headerValue = String.format("attachment; filename=\"%s\"", new java.io.File(fileName).getName());
@@ -367,4 +367,13 @@ public class DashboardController {
 
 	}
 */	
+	
+	
+	
+	@PreAuthorize("hasAuthority('dashboard,View')")
+	@GetMapping(value = "/getAllAreasByParentId")
+	@ResponseBody
+	public List<AreaModel> getAllAreasByParent(@RequestParam("id") int id) {
+		return dashboardService.getAllAreaByParentId(id);
+	}
 }

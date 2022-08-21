@@ -48,7 +48,7 @@ public class DataTreeServiceImpl implements DataTreeService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<BubbleDataModel> getBubbleChartData(Integer sectorId,int areaId,int timeperiodId) {
+	public List<BubbleDataModel> getBubbleChartData(Integer sectorId,int areaId,int timeperiodId,int mId, int wId) {
 		FormXpathScoreMapping formXpathScoreMapping = formXpathScoreMappingRepository
 				.findByFormXpathScoreId(sectorId);
 
@@ -276,8 +276,8 @@ public class DataTreeServiceImpl implements DataTreeService {
 //						int i= parentAreaMap.get(parentAreaMap.get(facilityScore.getLastVisitData()
 //								.getArea().getParentAreaId()).getParentAreaId()).getAreaId();
 //						System.out.println("dId->"+i);
-						
-						if(parentAreaMap.get(areaMap.get( facilityScore.getLastVisitData()
+//						if(facilityScore.getLastVisitData().getxForm().getFormId()!=10)
+						if(facilityScore.getLastVisitData().getxForm().getFormId()!=10 && parentAreaMap.get(areaMap.get( facilityScore.getLastVisitData()
 								.getArea().getParentAreaId()).getParentAreaId()).getParentAreaId()!=2) {
 						bubbleDataModel.setDistrictName(parentAreaMap.get(parentAreaMap.get(areaMap.get( facilityScore.getLastVisitData()
 								.getArea().getParentAreaId()).getParentAreaId()).getParentAreaId()).getAreaName());
@@ -370,8 +370,15 @@ public class DataTreeServiceImpl implements DataTreeService {
 			// For chc or PHC
 			else
 			{
-				List<Integer> parentIds = areaRepository
-						.findAreaIdByParentAreaId2(areaId);
+				List<Integer> parentIds;
+				 if(mId == 0 && wId == 0){
+				 parentIds = areaRepository.findAreaIdByParentAreaId2(areaId);
+				 }else if(mId != 0 && wId == 0) {
+					 parentIds = areaRepository.findAreaIdByParentAreaId(mId);
+				 }else  {
+					 parentIds = Arrays.asList(wId);
+				 }
+				
 				for (FacilityScore facilityScore :facilityScoreRepository.findByFormXpathScoreMappingAndLastVisitDataIsLiveTrueAndLastVisitDataAreaParentAreaIdInAndLastVisitDataTimPeriodTimePeriodIdAndLastVisitDataIsFinalizedTrue(formXpathScoreMapping,parentIds,timeperiodId)) {
 					if (facilityScore.getLastVisitData().isLive() && parentAreaMap.get(parentAreaMap.get(facilityScore.getLastVisitData()
 							.getArea().getParentAreaId()).getParentAreaId()).getParentAreaId()==areaId)

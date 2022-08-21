@@ -172,26 +172,32 @@ public class DashboardServiceImpl implements DashboardService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<GoogleMapDataModel> fetchAllGoogleMapData(Integer formId, Integer sectorId, Integer areaId,
-			int timeperiodId) throws Exception {
+			int timeperiodId, Integer municId, Integer wordId) throws Exception {
 
 		List<Object[]> objects;
 		XForm xform = xFormRepository.findByFormId(formId);
 		// if areaId is 0 then overall score of the state will shown
-		if (areaId == 0) {
+		if (areaId == 0 && municId == 0 && wordId == 0) {
 			// in database sectorId represented as formXpathScoreId inside table
 			objects = lastVisitDataRepository.getDataByFormId(formId, sectorId, timeperiodId);
-		}
-
-		// if areaId is Choosen and then if formId is 44 means DH Type then this will
-		// get Executed
-		else if (xform.getAreaLevel().getAreaLevelId() == Constants.DH_LEVEL) {
-			objects = lastVisitDataRepository.getDataByFormIdAndAreaId(formId, sectorId, areaId, timeperiodId);
-		}
-		// if district filter is done or a district login is done and form type is not
-		// of DH then this code will get executed
-		else {
+		} else if (areaId != 0 && municId == 0 && wordId == 0) {
 			objects = lastVisitDataRepository.getDataByFormIdAndDistrictAreaId(formId, sectorId, areaId, timeperiodId);
+		} else if (areaId != 0 && municId != 0 && wordId == 0) {
+			objects = lastVisitDataRepository.getDataByFormIdAndMunicipalAreaId(formId, sectorId, municId,
+					timeperiodId);
+		} else {
+			objects = lastVisitDataRepository.getDataByFormIdAndWordAreaId(formId, sectorId, wordId, timeperiodId);
 		}
+		/*
+		 * // if areaId is Choosen and then if formId is 44 means DH Type then this will
+		 * // get Executed // else if (xform.getAreaLevel().getAreaLevelId() ==
+		 * Constants.DH_LEVEL) { else if (xform.getAreaLevel().getAreaLevelId() == 15) {
+		 * objects = lastVisitDataRepository.getDataByFormIdAndAreaId(formId, sectorId,
+		 * areaId, timeperiodId);
+		 * 
+		 * } // if district filter is done or a district login is done and form type is
+		 * not // of DH then this code will get executed
+		 */
 		List<GoogleMapDataModel> googleMapDataModels = new ArrayList<>();
 
 		for (Object[] obj : objects) {
@@ -355,7 +361,7 @@ public class DashboardServiceImpl implements DashboardService {
 	@Override
 	@Transactional(readOnly = true)
 	public SpiderDataCollection getfetchSpiderData(Integer formId, Integer lastVisitDataId, Integer areaId,
-			Integer parenXpathId, int formMetaId) {
+			Integer parenXpathId, int formMetaId, Integer municId, Integer wordId) {
 		// getting user details from the state manager
 		CollectUserModel collectUserModel = (CollectUserModel) stateManager.getValue(Constants.USER_PRINCIPAL);
 		Integer areaLevelId = collectUserModel.getUserRoleFeaturePermissionMappings().get(0)
@@ -394,7 +400,7 @@ public class DashboardServiceImpl implements DashboardService {
 			// if district filter is done then areaId will contain the Id of that
 			// district.In case of State select Id will be 0
 			else if (areaId != 0) {
-				if (xform.getAreaLevel().getAreaLevelId() == Constants.DH_LEVEL) {
+				if (xform.getAreaLevel().getAreaLevelId() == Constants.COVID_LEVEL) {
 //					maxMinTimePeriodId = lastVisitDataRepository.findMaxMinTimePeriodIdForADistrict(areaId, formMetaId);
 
 					maxMinTimePeriodId = lastVisitDataRepository.findAllTimePeriodIdForADistrict(areaId, formMetaId);
@@ -416,11 +422,12 @@ public class DashboardServiceImpl implements DashboardService {
 						maxMinTimePeriodId = lastVisitDataRepository.findAllTimePeriodIdForADistrictPHCCHC(areaId,
 								formMetaId);
 
-						if (maxMinTimePeriodId.get(0)[0].toString().equals("3")
+						if (maxMinTimePeriodId.size() > 0 && maxMinTimePeriodId.get(0)[0].toString().equals("3")
 								&& maxMinTimePeriodId.get(0)[2].toString().equals("3")) {
 							maxMinTimePeriodId = lastVisitDataRepository
 									.findAllTimePeriodIdForADistrictPHCCHCForUhcAndHwc(areaId, formMetaId);
 						}
+
 					}
 				}
 			}
@@ -494,7 +501,7 @@ public class DashboardServiceImpl implements DashboardService {
 			}
 			Collections.reverse(maxMinTime);
 		}
-		if(maxMinTime.contains(0))
+		if (maxMinTime.contains(0))
 			maxMinTime.remove(0);
 		List<List<SpiderDataModel>> spiderDataModelsLists = new ArrayList<List<SpiderDataModel>>();
 		SpiderDataCollection spiderDataCollection = new SpiderDataCollection();
@@ -516,7 +523,7 @@ public class DashboardServiceImpl implements DashboardService {
 							.getRoleFeaturePermissionSchemeModel().getAreaModel().getAreaId();
 
 					// checking form is of DH
-					if (xform.getAreaLevel().getAreaLevelId() == Constants.DH_LEVEL) {
+					if (xform.getAreaLevel().getAreaLevelId() == Constants.COVID_LEVEL) {
 						spiderDatas = facilityScoreRepository.findSpiderDataChartByFormIdForDistrictForDGA(formMetaId,
 								-1, areaId, timeperiodId);
 						if (!spiderDatas.isEmpty())
@@ -540,7 +547,7 @@ public class DashboardServiceImpl implements DashboardService {
 				else if (areaId != 0) {
 
 					// if formaID is of DH
-					if (xform.getAreaLevel().getAreaLevelId() == Constants.DH_LEVEL) {
+					if (xform.getAreaLevel().getAreaLevelId() == Constants.COVID_LEVEL) {
 						spiderDatas = facilityScoreRepository.findSpiderDataChartByFormIdForDistrictForDGA(formMetaId,
 								-1, areaId, timeperiodId);
 
@@ -550,13 +557,31 @@ public class DashboardServiceImpl implements DashboardService {
 											Integer.parseInt(spiderDatas.get(0)[3].toString()), areaId, timeperiodId));
 					}
 					// if formId is of PHC,CHC
+					// change here
 					else {
-						spiderDatas = facilityScoreRepository.findSpiderDataChartByFormIdForDistrict(formMetaId, -1,
-								areaId, timeperiodId);
-						if (!spiderDatas.isEmpty())
-							spiderDatas
-									.addAll(facilityScoreRepository.findSpiderDataChartByFormIdForDistrict(formMetaId,
-											Integer.parseInt(spiderDatas.get(0)[3].toString()), areaId, timeperiodId));
+						if (areaId != 0 && municId == 0 && wordId == 0) {
+							spiderDatas = facilityScoreRepository.findSpiderDataChartByFormIdForDistrict(formMetaId, -1,
+									areaId, timeperiodId);
+							if (!spiderDatas.isEmpty())
+								spiderDatas.addAll(facilityScoreRepository.findSpiderDataChartByFormIdForDistrict(
+										formMetaId, Integer.parseInt(spiderDatas.get(0)[3].toString()), areaId,
+										timeperiodId));
+						} else if (areaId != 0 && municId != 0 && wordId == 0) {
+							spiderDatas = facilityScoreRepository.findSpiderDataChartByFormIdForMunicipal(formMetaId,
+									-1, municId, timeperiodId);
+							if (!spiderDatas.isEmpty())
+								spiderDatas.addAll(facilityScoreRepository.findSpiderDataChartByFormIdForMunicipal(
+										formMetaId, Integer.parseInt(spiderDatas.get(0)[3].toString()), municId,
+										timeperiodId));
+						} else {
+							spiderDatas = facilityScoreRepository.findSpiderDataChartByFormIdForWord(formMetaId, -1,
+									wordId, timeperiodId);
+							if (!spiderDatas.isEmpty())
+								spiderDatas.addAll(facilityScoreRepository.findSpiderDataChartByFormIdForWord(
+										formMetaId, Integer.parseInt(spiderDatas.get(0)[3].toString()), wordId,
+										timeperiodId));
+						}
+
 					}
 
 				}
@@ -636,16 +661,16 @@ public class DashboardServiceImpl implements DashboardService {
 
 		// Getting the parent Sectors
 		for (FormXpathScoreMapping formXpathScoreMapping : formXpathScoreMappings) {
-			if(formXpathScoreMapping.getForm().getFormId()!=10) {
-			FormXpathScoreMappingModel formXpathScoreMappingModel = new FormXpathScoreMappingModel();
-			formXpathScoreMappingModel.setFormXpathScoreId(formXpathScoreMapping.getFormXpathScoreId());
-			// Slicing the name as DB Consist the name as Total SCore OF DH for every Sector
+			if (formXpathScoreMapping.getForm().getFormId() != 11) {
+				FormXpathScoreMappingModel formXpathScoreMappingModel = new FormXpathScoreMappingModel();
+				formXpathScoreMappingModel.setFormXpathScoreId(formXpathScoreMapping.getFormXpathScoreId());
+				// Slicing the name as DB Consist the name as Total SCore OF DH for every Sector
 //			formXpathScoreMappingModel.setLabel(formXpathScoreMapping.getLabel().split("Overall Maximum score for")[0]);
-			formXpathScoreMappingModel.setLabel(getShortName(formXpathScoreMapping.getLabel()));
-			formXpathScoreMappingModel.setFormId(formXpathScoreMapping.getForm().getFormId());
-			formXpathScoreMappingModel.setMarkerClass(formXpathScoreMapping.getForm().getMarkerClass());
-			formXpathScoreMappingModel.setForm_meta_id(formXpathScoreMapping.getForm().getXform_meta_id());
-			formXpathScoreMappingModels.add(formXpathScoreMappingModel);
+				formXpathScoreMappingModel.setLabel(getShortName(formXpathScoreMapping.getLabel()));
+				formXpathScoreMappingModel.setFormId(formXpathScoreMapping.getForm().getFormId());
+				formXpathScoreMappingModel.setMarkerClass(formXpathScoreMapping.getForm().getMarkerClass());
+				formXpathScoreMappingModel.setForm_meta_id(formXpathScoreMapping.getForm().getXform_meta_id());
+				formXpathScoreMappingModels.add(formXpathScoreMappingModel);
 			}
 		}
 		return formXpathScoreMappingModels;
@@ -728,7 +753,7 @@ public class DashboardServiceImpl implements DashboardService {
 	@Transactional(readOnly = true)
 	public String exportToPdf(String spiderChart, String columnChart, Integer formId, Integer lastVisitDataId,
 			Integer areaId, HttpServletResponse response, int noOfFacilities, int timeperiodId, Integer parentXpathId,
-			int formMetaId, HttpServletRequest request) throws Exception {
+			int formMetaId, HttpServletRequest request, Integer municId, Integer wordId) throws Exception {
 
 		String uri = request.getRequestURI();
 		String url = request.getRequestURL().toString();
@@ -741,7 +766,7 @@ public class DashboardServiceImpl implements DashboardService {
 //		url+=ctxPath;
 
 		SpiderDataCollection spiderDataCollection = getfetchSpiderData(formId, lastVisitDataId, areaId, parentXpathId,
-				formMetaId);
+				formMetaId, municId, wordId);
 
 		new FileOutputStream(new File(context.getRealPath("") + "\\resources\\spider.svg"))
 				.write(spiderChart.getBytes());
@@ -771,7 +796,7 @@ public class DashboardServiceImpl implements DashboardService {
 		Document document = new Document(PageSize.A4.rotate());
 		String outputPath = messages.getMessage("outputPath", null, null) + area + "_" + sectorName + "_Score_Card_"
 				+ sdf.format(new java.util.Date()) + ".pdf";
-		outputPath = outputPath.contains("&")?outputPath.replaceAll("&", "And"):outputPath;
+		outputPath = outputPath.contains("&") ? outputPath.replaceAll("&", "And") : outputPath;
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(outputPath));
 
 		// setting Header Footer.PLS Refer to org.sdrc.dga.util.HeaderFooter
@@ -804,7 +829,7 @@ public class DashboardServiceImpl implements DashboardService {
 		spiderDataParagraph.setAlignment(Element.ALIGN_CENTER);
 		spiderDataParagraph.setSpacingAfter(10);
 		Chunk spiderChunk = new Chunk(
-				"Area / Facility: " + area + "\t  \t  Facility Level: " + sectorName + "\n \n N = " + noOfFacilities);
+				"Area / Facility: " + area + "\t  \t  Facility Level: " + sectorName + "\n N = " + noOfFacilities);
 		spiderDataParagraph.add(spiderChunk);
 
 		// for Image
@@ -833,8 +858,8 @@ public class DashboardServiceImpl implements DashboardService {
 		 * float scaler1 = ((document.getPageSize().getWidth() - document.leftMargin() -
 		 * document.rightMargin() - indentation1) / spiderDataImage .getWidth()) * 62;
 		 */
-		spiderDataImage.scalePercent(75);
-		spiderDataImage.setAbsolutePosition(170, -1);
+		spiderDataImage.scalePercent(70);
+		spiderDataImage.setAbsolutePosition(200, -1);
 
 		BaseColor siNoColor = WebColors.getRGBColor("#f4f4f4");
 		BaseColor redColor = WebColors.getRGBColor("#D7191C");
@@ -1049,7 +1074,7 @@ public class DashboardServiceImpl implements DashboardService {
 	@Transactional(readOnly = true)
 	public String exportToExcel(String spiderChart, String columnChart, Integer formId, Integer lastVisitDataId,
 			Integer areaId, HttpServletResponse response, int noOfFacilities, int timeperiodId, Integer parentXpathId,
-			int formMetaId, HttpServletRequest request) throws Exception {
+			int formMetaId, HttpServletRequest request, Integer municId, Integer wordId) throws Exception {
 		String uri = request.getRequestURI();
 		String url = request.getRequestURL().toString();
 
@@ -1080,7 +1105,7 @@ public class DashboardServiceImpl implements DashboardService {
 		}
 
 		SpiderDataCollection spiderDataCollection = getfetchSpiderData(formId, lastVisitDataId, areaId, parentXpathId,
-				formMetaId);
+				formMetaId, municId, wordId);
 
 		String area, sectorName;
 		FormXpathScoreMapping fxm = formXpathScoreMappingRepository.findByFormXpathScoreId(parentXpathId);
@@ -1363,7 +1388,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 		String outputPath = messages.getMessage("outputPath", null, null) + area + "_" + sectorName + "_Score_Card_"
 				+ sdf.format(new java.util.Date()) + ".xlsx";
-		outputPath = outputPath.contains("&")?outputPath.replaceAll("&", "And"):outputPath;
+		outputPath = outputPath.contains("&") ? outputPath.replaceAll("&", "And") : outputPath;
 		FileOutputStream fileOut = null;
 		fileOut = new FileOutputStream(outputPath);
 		workbook.write(fileOut);
@@ -1538,12 +1563,12 @@ public class DashboardServiceImpl implements DashboardService {
 		model.setAreaName(area.getAreaName());
 		model.setLive(area.getIsLive());
 		model.setParentAreaId(area.getParentAreaId());
-		
+
 		return model;
 	}
 
 	String getShortName(String facility) {
-		String name="";
+		String name = "";
 		switch (facility) {
 		case "Overall Maximum score For UPHC":
 			name = "UPHC";
@@ -1554,14 +1579,37 @@ public class DashboardServiceImpl implements DashboardService {
 		case "Overall Maximum score For Dispensary":
 			name = "Dispensary";
 			break;
-		case "Overall Maximum score For health Post":
+		case "Overall Maximum score For Health Post":
 			name = "Health Post";
+			break;
+		case "Overall Maximum score For Covid Facility":
+			name = "Covid";
 			break;
 
 		}
-		
+
 		return name;
 	}
 //I am here
+
+	@Override
+	public List<AreaModel> getAllAreaByParentId(int id) {
+		List<AreaModel> districtModels = new ArrayList<>();
+		List<Area> districts = areaRepository.findByParentAreaIdOrderByAreaNameAsc(id);
+
+		AreaModel areaModel = new AreaModel();
+
+		for (Area district : districts) {
+			areaModel = new AreaModel();
+			areaModel.setAreaId(district.getAreaId());
+			areaModel.setAreaName(district.getAreaName());
+			areaModel.setAreaLevelId(district.getAreaLevel().getAreaLevelId());
+			areaModel.setParentAreaId(district.getParentAreaId());
+			areaModel.setAreaCode(district.getAreaCode());
+
+			districtModels.add(areaModel);
+		}
+		return districtModels;
+	}
 
 }

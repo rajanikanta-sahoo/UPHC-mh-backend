@@ -12,13 +12,13 @@ public class IndicatorFormXpathMappingModel {
 	
 	private int indicatorFormXpathMappingId;
 
-	private String dhXpath;
+	private String dispansaryXpath;
 
-	private String chcXpath;
+	private String healthPostXpath;
 
-	private String phcXpath;
+	private String maternityHomeXpath;
 	
-	private String hscXpath;
+	private String uphcXpath;
 
 	private String label;
 	
@@ -30,14 +30,40 @@ public class IndicatorFormXpathMappingModel {
 	
 	private String type;
 
-	public String getHscXpath() {
-		return hscXpath;
+	
+	
+	public String getDispansaryXpath() {
+		return dispansaryXpath;
 	}
 
-	public void setHscXpath(String hscXpath) {
-		this.hscXpath = hscXpath;
+	public void setDispansaryXpath(String dispansaryXpath) {
+		this.dispansaryXpath = dispansaryXpath;
 	}
-	
+
+	public String getHealthPostXpath() {
+		return healthPostXpath;
+	}
+
+	public void setHealthPostXpath(String healthPostXpath) {
+		this.healthPostXpath = healthPostXpath;
+	}
+
+	public String getMaternityHomeXpath() {
+		return maternityHomeXpath;
+	}
+
+	public void setMaternityHomeXpath(String maternityHomeXpath) {
+		this.maternityHomeXpath = maternityHomeXpath;
+	}
+
+	public String getUphcXpath() {
+		return uphcXpath;
+	}
+
+	public void setUphcXpath(String uphcXpath) {
+		this.uphcXpath = uphcXpath;
+	}
+
 	public int getIndicatorFormXpathMappingId() {
 		return indicatorFormXpathMappingId;
 	}
@@ -46,29 +72,7 @@ public class IndicatorFormXpathMappingModel {
 		this.indicatorFormXpathMappingId = indicatorFormXpathMappingId;
 	}
 
-	public String getDhXpath() {
-		return dhXpath;
-	}
-
-	public void setDhXpath(String dhXpath) {
-		this.dhXpath = dhXpath;
-	}
-
-	public String getChcXpath() {
-		return chcXpath;
-	}
-
-	public void setChcXpath(String chcXpath) {
-		this.chcXpath = chcXpath;
-	}
-
-	public String getPhcXpath() {
-		return phcXpath;
-	}
-
-	public void setPhcXpath(String phcXpath) {
-		this.phcXpath = phcXpath;
-	}
+	
 
 	public String getLabel() {
 		return label;

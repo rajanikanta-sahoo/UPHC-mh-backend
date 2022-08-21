@@ -93,4 +93,16 @@ public interface FacilityScoreRepository {
 
 	List<Object[]> getDataForAspirationalNationalSpiderDataWithStates(Integer formMetaId, List<Integer> timeperiodIds,
 			List<Integer> states, List<Integer> parenXpathId);
+	
+	List<Object[]> findSpiderDataChartByFormIdForMunicipal(Integer formMetaId, Integer parenXpathId, Integer areaId,
+			int timeperiodId);
+	List<Object[]> findSpiderDataChartByFormIdForWord(Integer formMetaId, Integer parenXpathId, Integer areaId,
+			int timeperiodId);
+	
+	List<Object[]> findSpiderDataChartByFormIdForMunicipalForDGA(Integer formMetaId, Integer parenXpathId,
+			Integer areaId, int timeperiodId);
+	List<Object[]> findSpiderDataChartByFormIdForWordForDGA(Integer formMetaId, Integer parenXpathId,
+			Integer areaId, int timeperiodId);
+	
+	
 }

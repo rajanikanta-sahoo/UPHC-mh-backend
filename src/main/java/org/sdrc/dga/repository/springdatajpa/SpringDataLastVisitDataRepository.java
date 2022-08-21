@@ -467,4 +467,44 @@ public interface SpringDataLastVisitDataRepository extends
 				)
 		List<LastVisitData> findByAreaAreaCodeAndIsLiveTrueAndXFormMetaIdIsisFinalizedTrueOrderByTimPeriodTimePeriodIdAsc(@Param("areaCode") String areaCode,
 				@Param("formMetaId")	int formMetaId);
+		
+		
+		
+		@Override
+		@Query("SELECT lastVisitData, score, xForm, formScore,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
+				+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore,Area area "
+				+" WHERE lastVisitData.isLive IS TRUE "
+				+" AND lastVisitData.isFinalized IS TRUE "
+				
+				+ " AND area.parentAreaId=:areaId " 
+				+ "AND lastVisitData.area.parentAreaId =area.areaId "
+				+" AND score.lastVisitData.lastVisitDataId = lastVisitData.lastVisitDataId "
+				+" AND lastVisitData.xForm.formId = xForm.formId "
+				+ "AND formScore.formXpathScoreId =:sectorId"
+				+" AND score.formXpathScoreMapping.formXpathScoreId = formScore.formXpathScoreId "
+				+" AND xForm.formId = :formId"
+				+ " AND lastVisitData.timPeriod.timePeriodId = :timeperiodId"
+				)
+		public List<Object[]> getDataByFormIdAndMunicipalAreaId(@Param("formId") Integer formId,
+				@Param("sectorId")Integer sectorId,@Param("areaId") Integer areaId,@Param("timeperiodId") int timePeriod);
+		
+		
+		@Override
+		@Query("SELECT lastVisitData, score, xForm, formScore,(score.score / score.maxScore)*100 FROM LastVisitData lastVisitData,"
+				+" FacilityScore score, XForm xForm, FormXpathScoreMapping formScore,Area area "
+				+" WHERE lastVisitData.isLive IS TRUE "
+				+" AND lastVisitData.isFinalized IS TRUE "
+				
+				+ " AND area.areaId=:areaId " 
+				+ "AND lastVisitData.area.parentAreaId =area.areaId "
+				+" AND score.lastVisitData.lastVisitDataId = lastVisitData.lastVisitDataId "
+				+" AND lastVisitData.xForm.formId = xForm.formId "
+				+ "AND formScore.formXpathScoreId =:sectorId"
+				+" AND score.formXpathScoreMapping.formXpathScoreId = formScore.formXpathScoreId "
+				+" AND xForm.formId = :formId"
+				+ " AND lastVisitData.timPeriod.timePeriodId = :timeperiodId"
+				)
+		public List<Object[]> getDataByFormIdAndWordAreaId(@Param("formId") Integer formId,
+				@Param("sectorId")Integer sectorId,@Param("areaId") Integer areaId,@Param("timeperiodId") int timePeriod);
+		
 }

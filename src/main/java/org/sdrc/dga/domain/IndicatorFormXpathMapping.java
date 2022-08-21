@@ -20,21 +20,17 @@ public class IndicatorFormXpathMapping {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int indicatorFormXpathMappingId;
 
-	private String dhXpath;
+	private String dispansary;
 
-	private String chcXpath;
+	private String healthPost;
 
-	private String phcXpath;
+	private String maternityHome;
 	
-	private String hscXpath;
+	private String uphc;
 
-	public String getHscXpath() {
-		return hscXpath;
-	}
+	
 
-	public void setHscXpath(String hscXpath) {
-		this.hscXpath = hscXpath;
-	}
+	
 
 	@Column(nullable = false)
 	private String label;
@@ -58,29 +54,7 @@ public class IndicatorFormXpathMapping {
 		this.indicatorFormXpathMappingId = indicatorFormXpathMappingId;
 	}
 
-	public String getDhXpath() {
-		return dhXpath;
-	}
-
-	public void setDhXpath(String dhXpath) {
-		this.dhXpath = dhXpath;
-	}
-
-	public String getChcXpath() {
-		return chcXpath;
-	}
-
-	public void setChcXpath(String chcXpath) {
-		this.chcXpath = chcXpath;
-	}
-
-	public String getPhcXpath() {
-		return phcXpath;
-	}
-
-	public void setPhcXpath(String phcXpath) {
-		this.phcXpath = phcXpath;
-	}
+	
 
 	public String getLabel() {
 		return label;
@@ -120,6 +94,38 @@ public class IndicatorFormXpathMapping {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getDispansary() {
+		return dispansary;
+	}
+
+	public void setDispansary(String dispansary) {
+		this.dispansary = dispansary;
+	}
+
+	public String getHealthPost() {
+		return healthPost;
+	}
+
+	public void setHealthPost(String healthPost) {
+		this.healthPost = healthPost;
+	}
+
+	public String getMaternityHome() {
+		return maternityHome;
+	}
+
+	public void setMaternityHome(String maternityHome) {
+		this.maternityHome = maternityHome;
+	}
+
+	public String getUphc() {
+		return uphc;
+	}
+
+	public void setUphc(String uphc) {
+		this.uphc = uphc;
 	}
 
 	

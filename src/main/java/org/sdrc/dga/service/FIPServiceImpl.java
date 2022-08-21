@@ -426,7 +426,10 @@ public class FIPServiceImpl implements FIPService {
 														.setCellValue(listNameLabelMap
 																.get(typeCell.getStringCellValue()
 																		.split("\\s+")[type.length - 1].trim())
-																.get(response));
+																.get(response)!=null?listNameLabelMap
+																		.get(typeCell.getStringCellValue()
+																				.split("\\s+")[type.length - 1].trim())
+																		.get(response):response);
 											}
 
 										} else if (!response.equals("") && typeCell.getStringCellValue().contains(
@@ -444,8 +447,10 @@ public class FIPServiceImpl implements FIPService {
 											valueCell.setCellValue(multipleVal.toString());
 										} else if (!response.equals("")
 												&& typeCell.getStringCellValue().contains("decimal")) {
-
-											valueCell.setCellValue(df.format(Double.parseDouble(response)));
+											if(response.equals("-"))
+												valueCell.setCellValue("-");
+											else
+ 											valueCell.setCellValue(df.format(Double.parseDouble(response)));
 										} else
 											valueCell.setCellValue(response);
 										// valueCell.setCellStyle(valueCell.getCellStyle());

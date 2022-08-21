@@ -967,6 +967,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 			Cell phcCell = row.getCell(8);
 			Cell hscCell = row.getCell(5);
 			Cell typeCell = row.getCell(0);
+			/*
 			if (!labelCell.getStringCellValue().trim().equalsIgnoreCase("")) {
 
 				IndicatorFormXpathMapping indicatorFormXpathMapping = new IndicatorFormXpathMapping();
@@ -999,7 +1000,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 
 				indicatorFormXpathMappings.add(indicatorFormXpathMapping);
 				System.out.println(indicatorFormXpathMapping.getChcXpath());
-			}
+			}*/
 		}
 
 		indicatorFormXpathMappingRepository.save(indicatorFormXpathMappings);
@@ -1158,7 +1159,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 	@Transactional
 	public boolean updateArea() throws Exception {
 
-		String inputFilePath = "C:\\Users\\SDRC_DEV\\Documents\\sdrc\\uphc-mh\\lagacy-data\\areaTamplate_r4.xlsx";
+		String inputFilePath = "C:\\Users\\SDRC_DEV\\Documents\\sdrc\\uphc-mh\\lagacy-data\\areaTamplate_r6.xlsx";
 		FileInputStream fileInputStream = new FileInputStream(inputFilePath);
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
 
@@ -1177,7 +1178,7 @@ public class MasterRawDataServiceImpl implements MasterRawDataService {
 			Cell parentCode = row.getCell(3);
 			Cell areaLevel = row.getCell(4);
 			
-			System.out.println("from file ->"+areaCode + "-" + areaName);
+			System.out.println("from file ->"+areaCode + "-" + areaName+",areaLevel-"+areaLevel);
 			if (!areaMap.containsKey(areaCode.getStringCellValue())) {
 				Area area = new Area();
 				area.setAreaCode(areaCode.getStringCellValue());

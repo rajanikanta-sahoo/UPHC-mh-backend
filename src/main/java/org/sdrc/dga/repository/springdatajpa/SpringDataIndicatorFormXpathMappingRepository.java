@@ -21,8 +21,8 @@ public interface SpringDataIndicatorFormXpathMappingRepository extends
 
 	
 	@Override
-	@Query("SELECT indi.indicatorFormXpathMappingId,indi.label,indi.type,indi.sector,indi.dhXpath"
-			+ ",indi.chcXpath,indi.phcXpath,indi.hscXpath FROM IndicatorFormXpathMapping indi WHERE indi.indicatorFormXpathMappingId IN "
+	@Query("SELECT indi.indicatorFormXpathMappingId,indi.label,indi.type,indi.sector,indi.maternityHome"
+			+ ",indi.dispansary,indi.healthPost,indi.uphc FROM IndicatorFormXpathMapping indi WHERE indi.indicatorFormXpathMappingId IN "
 			+ " (SELECT MAX(indi1.indicatorFormXpathMappingId) FROM IndicatorFormXpathMapping indi1 GROUP BY indi1.label )"
 			+ " ORDER BY indi.label ASC ")
 	public List<Object []> findDistinctLabels();

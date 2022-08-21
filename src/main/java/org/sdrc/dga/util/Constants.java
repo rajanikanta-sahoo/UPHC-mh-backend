@@ -86,6 +86,7 @@ public class Constants {
 		public static final int HSC_LEVEL=7;
 		public static final int UPHC_LEVEL=8;
 		public static final int UHC_LEVEL=3;
+		public static final int COVID_LEVEL=3;
 		
 		
 		public static final String LOG_FILE="uphcAssesment";

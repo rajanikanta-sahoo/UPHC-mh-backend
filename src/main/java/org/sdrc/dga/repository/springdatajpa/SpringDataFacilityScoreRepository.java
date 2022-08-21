@@ -206,5 +206,64 @@ public interface SpringDataFacilityScoreRepository extends
 	public List<Object[]> getDataForAspirationalNationalSpiderDataWithStates(
 			@Param("formMetaId") Integer formMetaId,@Param("timeperiodIds")List<Integer> timeperiodIds,@Param("states")List<Integer> states,@Param("parenXpathId")List<Integer>parenXpathId);
 	
+	@Override
+	@Query("SELECT fxm.label,(AVG(fc.score / fc.maxScore)*100),fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId FROM "
+			+ "FacilityScore fc JOIN fc.formXpathScoreMapping fxm,Area ar "
+			+ "WHERE  fxm.parentXpathId=:parenXpathId "
+			+ "AND fc.formXpathScoreMapping.formXpathScoreId = fxm.formXpathScoreId "
+			
+			+ " AND ar.parentAreaId=:areaId "
+			+ "AND fc.lastVisitData.area.parentAreaId=ar.areaId "
+			+ "AND fc.lastVisitData.isLive = true  AND fxm.form.xform_meta_id = :formMetaId "
+			+ " AND fc.lastVisitData.timPeriod.timePeriodId = :timeperiodId"
+			+ " GROUP BY fxm.label ,fxm.maxScore,fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId "
+			+ "ORDER BY fxm.label ASC ")
+	public List<Object[]> findSpiderDataChartByFormIdForMunicipal(
+			@Param("formMetaId") Integer formMetaId,@Param("parenXpathId")Integer parenXpathId,@Param("areaId")Integer areaId,@Param("timeperiodId")int timeperiodId);
+	
+	
+	@Override
+	@Query("SELECT fxm.label,(AVG(fc.score / fc.maxScore)*100),fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId FROM "
+			+ "FacilityScore fc JOIN fc.formXpathScoreMapping fxm,Area ar "
+			+ "WHERE  fxm.parentXpathId=:parenXpathId "
+			+ "AND fc.formXpathScoreMapping.formXpathScoreId = fxm.formXpathScoreId "
+			
+			+ " AND ar.areaId=:areaId "
+			+ "AND fc.lastVisitData.area.parentAreaId=ar.areaId "
+			+ "AND fc.lastVisitData.isLive = true  AND fxm.form.xform_meta_id = :formMetaId "
+			+ " AND fc.lastVisitData.timPeriod.timePeriodId = :timeperiodId"
+			+ " GROUP BY fxm.label ,fxm.maxScore,fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId "
+			+ "ORDER BY fxm.label ASC ")
+	public List<Object[]> findSpiderDataChartByFormIdForWord(
+			@Param("formMetaId") Integer formMetaId,@Param("parenXpathId")Integer parenXpathId,@Param("areaId")Integer areaId,@Param("timeperiodId")int timeperiodId);
+	
+	
+	@Override
+	@Query("SELECT fxm.label,(AVG(fc.score / fc.maxScore)*100),fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId FROM "
+			+ "FacilityScore fc JOIN fc.formXpathScoreMapping fxm "
+			+ "WHERE  fxm.parentXpathId=:parenXpathId "
+			+ "AND fc.formXpathScoreMapping.formXpathScoreId = fxm.formXpathScoreId "
+			+ "AND fc.lastVisitData.area.parentAreaId=:areaId "
+			+ "AND fc.lastVisitData.isLive = true  AND fxm.form.xform_meta_id = :formMetaId "
+			+ " AND fc.lastVisitData.timPeriod.timePeriodId = :timeperiodId"
+			+ " GROUP BY fxm.label ,fxm.maxScore,fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId "
+			+ "ORDER BY fxm.label ASC ")
+	public List<Object[]> findSpiderDataChartByFormIdForMunicipalForDGA(
+			@Param("formMetaId") Integer formMetaId,@Param("parenXpathId")Integer parenXpathId,@Param("areaId")Integer areaId,@Param("timeperiodId")int timeperiodId);
+
+	@Override
+	@Query("SELECT fxm.label,(AVG(fc.score / fc.maxScore)*100),fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId FROM "
+			+ "FacilityScore fc JOIN fc.formXpathScoreMapping fxm "
+			+ "WHERE  fxm.parentXpathId=:parenXpathId "
+			+ "AND fc.formXpathScoreMapping.formXpathScoreId = fxm.formXpathScoreId "
+			+ "AND fc.lastVisitData.area.parentAreaId=:areaId "
+			+ "AND fc.lastVisitData.isLive = true  AND fxm.form.xform_meta_id = :formMetaId "
+			+ " AND fc.lastVisitData.timPeriod.timePeriodId = :timeperiodId"
+			+ " GROUP BY fxm.label ,fxm.maxScore,fc.lastVisitData.timPeriod.timeperiod,fxm.formXpathScoreId "
+			+ "ORDER BY fxm.label ASC ")
+	public List<Object[]> findSpiderDataChartByFormIdForWordForDGA(
+			@Param("formMetaId") Integer formMetaId,@Param("parenXpathId")Integer parenXpathId,@Param("areaId")Integer areaId,@Param("timeperiodId")int timeperiodId);
+
+	
 	
 }

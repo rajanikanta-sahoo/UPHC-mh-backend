@@ -88,11 +88,11 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 				.findByIsLiveTrueAndTimPeriodTimePeriodIdAndXFormFormId(timePeriod, formId).stream()
 				.map(a -> a.getArea().getAreaId()).collect(Collectors.toList());
 		Map<String, RawFormXapths> rawFormXpathMap = rawFormXapthsRepository.findByFormFormId(formId).stream()
-				.collect(Collectors.toMap(RawFormXapths::getXpath, a -> a));
+				.collect(Collectors.toMap(a -> a.getXpath().toLowerCase(), a -> a));
 
 		Map<String, FormXpathScoreMapping> formXpathMap = new HashMap<>();
 		for (FormXpathScoreMapping f : formXpathScoreMappingRepository.findByFormFormId(formId)) {
-			formXpathMap.put(f.getxPath(), f);
+			formXpathMap.put(f.getxPath().toLowerCase(), f);
 		}
 //		Map<String, FormXpathScoreMapping> formXpathMap = formXpathScoreMappingRepository.findByFormFormId(formId)
 //				.stream().collect(Collectors.toMap(FormXpathScoreMapping::getxPath, a -> a));
@@ -145,6 +145,7 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 				int count = 0;
 				xssfRow = sheet.getRow(row);
 				cellIterator = xssfRow.cellIterator();
+//				if(row==244)
 				System.out.println(row);
 				// here we are creating LastVisitData and setting all values
 				xssfRow = sheet.getRow(row);
@@ -203,8 +204,11 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 						FacilityScore fScore = new FacilityScore();
 //						if(xPath.toString().equals("calc_hf"))
 //							System.out.println("hi");
-//						System.out.println(count);
+//						System.out.println(cell.getColumnIndex());
 //					int type = cell.getCellType();
+//						if(xPath.toString().toLowerCase().contains("bg_k/max_k"))
+//							System.out.println("hi");
+						
 						if (!cell.toString().equals("null")) {
 							if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC && HSSFDateUtil.isCellDateFormatted(cell))
 								if (xPath.toString().contains("time"))
@@ -214,26 +218,29 @@ public class LegacyDataImportServiceImpl implements LegacyDataImportService {
 							else if (cell.getCellType() == Cell.CELL_TYPE_STRING)
 								value = cell.getStringCellValue();
 							else if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC)
-								value = cell.getNumericCellValue() + "";
+								value = ((int)Float.parseFloat(cell.getNumericCellValue() + ""))+"" ;
 							else if(cell.getCellType() == Cell.CELL_TYPE_FORMULA)
-								value = cell.getNumericCellValue() + "";
+								value = ((int)Float.parseFloat(cell.getNumericCellValue() + ""))+"";
+							else if(cell.getCellType() == Cell.CELL_TYPE_BLANK)
+								value = "";
 						} else {
 							value = "";
 						}
-//						System.out.println("value -> " + value);
+//						System.out.println(cell.getColumnIndex()+"-value -> " + value);
+						
 
-						if (rawFormXpathMap.containsKey("/" + xPath.toString())) {
+						if (rawFormXpathMap.containsKey("/" + xPath.toString().toLowerCase())) {
 							rwScore.setLastVisitData(lvd);
-							rwScore.setRawFormXapths(rawFormXpathMap.get("/" + xPath.toString()));
+							rwScore.setRawFormXapths(rawFormXpathMap.get("/" + xPath.toString().toLowerCase()));
 							value = value.replace("\n", ",");
 							rwScore.setScore(value);
 //							System.out.println("rwScore->" + xPath + ", score->" + value);
 							rawDataScoreRepository.save(rwScore);
 						}
-						if (formXpathMap.containsKey(xPath.toString())) {
-							fScore.setFormXpathScoreMapping(formXpathMap.get(xPath.toString()));
+						if (formXpathMap.containsKey(xPath.toString().toLowerCase())) {
+							fScore.setFormXpathScoreMapping(formXpathMap.get(xPath.toString().toLowerCase()));
 							fScore.setLastVisitData(lvd);
-							fScore.setMaxScore(formXpathMap.get(xPath.toString()).getMaxScore());
+							fScore.setMaxScore(formXpathMap.get(xPath.toString().toLowerCase()).getMaxScore());
 							
 //							if(xPath.toString().equals("calc_hf"))
 //								System.out.println("hi");

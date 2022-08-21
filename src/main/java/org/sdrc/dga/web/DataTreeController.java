@@ -24,9 +24,9 @@ public class DataTreeController {
 	@PreAuthorize("hasAuthority('dataTree,View')")
 	@GetMapping("/bubbleChartData")
 	@ResponseBody
-	public List<BubbleDataModel> getBubbleChartData(@RequestParam("sectorId")Integer sectorId,@RequestParam("areaId") int areaId,@RequestParam("timeperiodId") int timeperiodId)
+	public List<BubbleDataModel> getBubbleChartData(@RequestParam("sectorId")Integer sectorId,@RequestParam("areaId") int areaId,@RequestParam("timeperiodId") int timeperiodId,@RequestParam("mId") int mId,@RequestParam("wId") int wId)
 	{
-		return dataTreeService.getBubbleChartData(sectorId,areaId,timeperiodId);
+		return dataTreeService.getBubbleChartData(sectorId,areaId,timeperiodId,mId,wId);
 	}
 	
 	@PreAuthorize("hasAuthority('dataTree,View')")

@@ -319,9 +319,9 @@ public class RawDataReportServiceImpl implements RawDataReportService {
 
 				LastVisitData lvd = lvds.get(tpIndex);
 
-				
+//				System.out.println("lvd->"+lvd.getLastVisitDataId());
 				Map<String, RawDataScore> scoresMap = lvd.getRawDataScore().stream()
-						.collect(Collectors.toMap(a -> a.getRawFormXapths().getXpath(), a -> a));
+						.collect(Collectors.toMap(a -> a.getRawFormXapths().getXpath().toLowerCase(), a -> a));
 
 				StringBuilder queryString = new StringBuilder();
 				Map<String, String> xPath = new LinkedHashMap<String, String>();
@@ -329,7 +329,6 @@ public class RawDataReportServiceImpl implements RawDataReportService {
 				for (RawDataScore rawData : lvd.getRawDataScore()) {
 					xPath.put(rawData.getRawFormXapths().getXpath(), rawData.getScore());
 				}
-
 				// insert data from here
 				int count = 0;
 				StringBuilder xpath = new StringBuilder();
@@ -340,15 +339,15 @@ public class RawDataReportServiceImpl implements RawDataReportService {
 					if (xpath.length() > 0)
 						xpath.delete(0, xpath.length());
 					xpath = xpath.append("/" + xPathMap.get(k));
-
+//if(xpath.toString().equalsIgnoreCase("/calc_uphc"))
+//	System.out.println("hello");
 					cell = row.createCell(k);
 					cell.setCellStyle(noCellStyle);
-					cell.setCellValue(scoresMap.get(xpath.toString()) != null
-							? scoresMap.get(xpath.toString()).getScore().contains("IND")
-									? areaNameMap.get(scoresMap.get(xpath.toString()).getScore())
-									: scoresMap.get(xpath.toString()).getScore()
+					cell.setCellValue(scoresMap.get(xpath.toString().toLowerCase()) != null
+							? scoresMap.get(xpath.toString().toLowerCase()).getScore().contains("IND")
+									? areaNameMap.get(scoresMap.get(xpath.toString().toLowerCase()).getScore())
+									: scoresMap.get(xpath.toString().toLowerCase()).getScore()
 							: "");
-
 				}
 
 //				colId++;

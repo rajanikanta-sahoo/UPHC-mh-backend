@@ -13,25 +13,25 @@ public class CrossTabDataModel {
 	
 	private int colIndicatorFormXpathMappingId;
 
-	private String colDhXpath;// will be zero in case of indicator is not applicable for DH
+	private String colDispansaryXpath;// will be zero in case of indicator is not applicable for DH
 
-	private String colChcXpath;// will be zero in case of indicator is not applicable for CHC
+	private String colHealthPostXpath;// will be zero in case of indicator is not applicable for CHC
 
-	private String colPhcXpath;// will be zero in case of indicator is not applicable for PHC
+	private String colMaternityHomeXpath;// will be zero in case of indicator is not applicable for PHC
 	
-	private String colHscXpath;// will be zero in case of indicator is not applicable for HSC
+	private String colUphcXpath;// will be zero in case of indicator is not applicable for HSC
 
 	private String coLabel;
 	
 	private int rowIndicatorFormXpathMappingId;
 
-	private String rowDhXpath;// will be zero in case of indicator is not applicable for DH
+	private String rowDispansaryXpath;// will be zero in case of indicator is not applicable for DH
 
-	private String rowChcXpath;// will be zero in case of indicator is not applicable for CHC
+	private String rowHealthPostXpath;// will be zero in case of indicator is not applicable for CHC
 
-	private String rowPhcXpath;// will be zero in case of indicator is not applicable for PHC
+	private String rowMaternityHomeXpath;// will be zero in case of indicator is not applicable for PHC
 	
-	private String rowHscXpath;// will be zero in case of indicator is not applicable for HSC
+	private String rowUphcXpath;// will be zero in case of indicator is not applicable for HSC
 
 	private String rowLabel;
 	
@@ -53,30 +53,7 @@ public class CrossTabDataModel {
 		this.colIndicatorFormXpathMappingId = colIndicatorFormXpathMappingId;
 	}
 
-	public String getColDhXpath() {
-		return colDhXpath;
-	}
-
-	public void setColDhXpath(String colDhXpath) {
-		this.colDhXpath = colDhXpath;
-	}
-
-	public String getColChcXpath() {
-		return colChcXpath;
-	}
-
-	public void setColChcXpath(String colChcXpath) {
-		this.colChcXpath = colChcXpath;
-	}
-
-	public String getColPhcXpath() {
-		return colPhcXpath;
-	}
-
-	public void setColPhcXpath(String colPhcXpath) {
-		this.colPhcXpath = colPhcXpath;
-	}
-
+	
 	public String getCoLabel() {
 		return coLabel;
 	}
@@ -93,45 +70,18 @@ public class CrossTabDataModel {
 		this.rowIndicatorFormXpathMappingId = rowIndicatorFormXpathMappingId;
 	}
 
-	public String getRowDhXpath() {
-		return rowDhXpath;
-	}
-
-	public String getColHscXpath() {
-		return colHscXpath;
-	}
-
-	public void setColHscXpath(String colHscXpath) {
-		this.colHscXpath = colHscXpath;
-	}
+	
 
 	
-	public String getRowHscXpath() {
-		return rowHscXpath;
+	
+	
+
+	public String getRowUphcXpath() {
+		return rowUphcXpath;
 	}
 
-	public void setRowHscXpath(String rowHscXpath) {
-		this.rowHscXpath = rowHscXpath;
-	}
-
-	public void setRowDhXpath(String rowDhXpath) {
-		this.rowDhXpath = rowDhXpath;
-	}
-
-	public String getRowChcXpath() {
-		return rowChcXpath;
-	}
-
-	public void setRowChcXpath(String rowChcXpath) {
-		this.rowChcXpath = rowChcXpath;
-	}
-
-	public String getRowPhcXpath() {
-		return rowPhcXpath;
-	}
-
-	public void setRowPhcXpath(String rowPhcXpath) {
-		this.rowPhcXpath = rowPhcXpath;
+	public void setRowUphcXpath(String rowUphcXpath) {
+		this.rowUphcXpath = rowUphcXpath;
 	}
 
 	public String getRowLabel() {
@@ -182,6 +132,62 @@ public class CrossTabDataModel {
 	public void setColIndicatorFormXpathMappingType(
 			String colIndicatorFormXpathMappingType) {
 		this.colIndicatorFormXpathMappingType = colIndicatorFormXpathMappingType;
+	}
+
+	public String getColDispansaryXpath() {
+		return colDispansaryXpath;
+	}
+
+	public void setColDispansaryXpath(String colDispansaryXpath) {
+		this.colDispansaryXpath = colDispansaryXpath;
+	}
+
+	public String getColHealthPostXpath() {
+		return colHealthPostXpath;
+	}
+
+	public void setColHealthPostXpath(String colHealthPostXpath) {
+		this.colHealthPostXpath = colHealthPostXpath;
+	}
+
+	public String getColMaternityHomeXpath() {
+		return colMaternityHomeXpath;
+	}
+
+	public void setColMaternityHomeXpath(String colMaternityHomeXpath) {
+		this.colMaternityHomeXpath = colMaternityHomeXpath;
+	}
+
+	public String getColUphcXpath() {
+		return colUphcXpath;
+	}
+
+	public void setColUphcXpath(String colUphcXpath) {
+		this.colUphcXpath = colUphcXpath;
+	}
+
+	public String getRowDispansaryXpath() {
+		return rowDispansaryXpath;
+	}
+
+	public void setRowDispansaryXpath(String rowDispansaryXpath) {
+		this.rowDispansaryXpath = rowDispansaryXpath;
+	}
+
+	public String getRowHealthPostXpath() {
+		return rowHealthPostXpath;
+	}
+
+	public void setRowHealthPostXpath(String rowHealthPostXpath) {
+		this.rowHealthPostXpath = rowHealthPostXpath;
+	}
+
+	public String getRowMaternityHomeXpath() {
+		return rowMaternityHomeXpath;
+	}
+
+	public void setRowMaternityHomeXpath(String rowMaternityHomeXpath) {
+		this.rowMaternityHomeXpath = rowMaternityHomeXpath;
 	}
 	
 	
